@@ -3,259 +3,832 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="container">
+    <>
       <Head>
         <title>TechStar - Electrical & Electronics Marketplace</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+        <meta
+          name="description"
+          content="TechStar - International Electrical & Electronics E-commerce Platform"
+        />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        />
       </Head>
 
-      <main className="main">
-        <div className="hero">
-          <h1 className="title">⚡ TechStar</h1>
-          <p className="subtitle">
-            International Electrical & Electronics E-commerce Platform
-          </p>
-          
-          <div className="buttonGroup">
-            <Link href="/admin" className="btn btn-primary">
-              🔐 Admin Panel
-            </Link>
-            <a 
-              href="https://github.com/aminul-islam-be/techStar" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="btn btn-secondary"
-            >
-              📦 GitHub
-            </a>
-          </div>
+      <div className="page">
+        <main className="main">
+          {/* Hero Section */}
+          <section className="hero">
+            <div className="heroContent">
+              <div className="logoIcon">⚡</div>
 
-          <div className="status">
-            <p>✅ Server is running successfully!</p>
-            <small>Next.js + Vercel Deployment</small>
-          </div>
-        </div>
+              <h1 className="title">TechStar</h1>
 
-        <div className="features">
-          <div className="featureCard">
-            <h3>🌍 Global</h3>
-            <p>Shop from international sellers</p>
-          </div>
-          <div className="featureCard">
-            <h3>🛡️ Secure</h3>
-            <p>Safe and secure payments</p>
-          </div>
-          <div className="featureCard">
-            <h3>⚡ Fast</h3>
-            <p>Lightning fast delivery</p>
-          </div>
-        </div>
-      </main>
+              <p className="subtitle">
+                International Electrical & Electronics
+                <br className="mobileBreak" />
+                E-commerce Platform
+              </p>
 
-      <footer className="footer">
-        <p>© 2026 TechStar. All rights reserved.</p>
-      </footer>
+              <div className="buttonGroup">
+                <Link href="/admin" className="btn btnPrimary">
+                  <span>🔐</span>
+                  Admin Panel
+                </Link>
+
+                <a
+                  href="https://github.com/aminul-islam-be/techStar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btnSecondary"
+                >
+                  <span>📦</span>
+                  GitHub
+                </a>
+              </div>
+
+              {/* Status */}
+              <div className="status">
+                <div className="statusTop">
+                  <span className="statusDot"></span>
+                  <strong>Server is running successfully!</strong>
+                </div>
+
+                <small>Next.js + Vercel Deployment</small>
+              </div>
+            </div>
+          </section>
+
+          {/* Features */}
+          <section className="features">
+            <div className="featureCard">
+              <div className="featureIcon">🌍</div>
+              <div>
+                <h3>Global</h3>
+                <p>Shop from international sellers</p>
+              </div>
+            </div>
+
+            <div className="featureCard">
+              <div className="featureIcon">🛡️</div>
+              <div>
+                <h3>Secure</h3>
+                <p>Safe and secure payments</p>
+              </div>
+            </div>
+
+            <div className="featureCard">
+              <div className="featureIcon">⚡</div>
+              <div>
+                <h3>Fast</h3>
+                <p>Lightning fast delivery</p>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* Footer */}
+        <footer className="footer">
+          <p>© 2026 TechStar. All rights reserved.</p>
+        </footer>
+      </div>
 
       <style jsx>{`
-        /* Reset and Base */
+        /* ================================
+           GLOBAL RESET
+        ================================= */
+
         * {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
         }
 
-        html, body {
-          overflow-x: hidden;
+        html {
           width: 100%;
+          min-height: 100%;
+          overflow-x: hidden;
         }
 
-        .container {
+        body {
+          width: 100%;
           min-height: 100vh;
-          padding: 0 16px;
+          overflow-x: hidden;
+          margin: 0;
+          padding: 0;
+          font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Helvetica,
+            Arial,
+            sans-serif;
+          background: #f5f7fb;
+        }
+
+        a {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ================================
+           PAGE
+        ================================= */
+
+        .page {
+          width: 100%;
+          min-height: 100vh;
           display: flex;
           flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background: #f8f9fa;
-          width: 100%;
-          max-width: 100vw;
           overflow-x: hidden;
+          background:
+            radial-gradient(
+              circle at top left,
+              rgba(102, 126, 234, 0.08),
+              transparent 35%
+            ),
+            #f5f7fb;
         }
 
         .main {
-          padding: 2rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
           width: 100%;
           max-width: 1200px;
+          margin: 0 auto;
+          padding: clamp(20px, 5vw, 60px) 16px;
+          flex: 1;
+
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
         }
 
-        /* Hero Section */
+        /* ================================
+           HERO
+        ================================= */
+
         .hero {
-          text-align: center;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 40px 20px;
-          border-radius: 20px;
           width: 100%;
-          max-width: 800px;
-          margin: 0 auto;
-          box-sizing: border-box;
+          max-width: 900px;
+
+          border-radius: clamp(18px, 4vw, 28px);
+
+          background:
+            radial-gradient(
+              circle at 20% 20%,
+              rgba(255, 255, 255, 0.16),
+              transparent 30%
+            ),
+            linear-gradient(
+              135deg,
+              #667eea 0%,
+              #764ba2 100%
+            );
+
+          color: white;
+
+          box-shadow:
+            0 20px 60px rgba(80, 70, 150, 0.2),
+            0 5px 20px rgba(0, 0, 0, 0.08);
+
+          overflow: hidden;
+          position: relative;
         }
+
+        .hero::before {
+          content: "";
+          position: absolute;
+          width: 220px;
+          height: 220px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.06);
+          top: -100px;
+          right: -80px;
+        }
+
+        .hero::after {
+          content: "";
+          position: absolute;
+          width: 180px;
+          height: 180px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.05);
+          bottom: -100px;
+          left: -70px;
+        }
+
+        .heroContent {
+          width: 100%;
+          position: relative;
+          z-index: 2;
+
+          padding: clamp(28px, 7vw, 65px)
+            clamp(18px, 6vw, 50px);
+
+          text-align: center;
+        }
+
+        /* ================================
+           LOGO
+        ================================= */
+
+        .logoIcon {
+          font-size: clamp(2rem, 8vw, 4rem);
+          line-height: 1;
+          margin-bottom: 10px;
+
+          filter: drop-shadow(
+            0 5px 12px rgba(0, 0, 0, 0.15)
+          );
+        }
+
+        /* ================================
+           TITLE
+        ================================= */
 
         .title {
           margin: 0;
-          line-height: 1.2;
-          font-size: 2.8rem;
+
+          font-size: clamp(
+            2.2rem,
+            8vw,
+            4.2rem
+          );
+
+          line-height: 1.05;
+          font-weight: 800;
+          letter-spacing: -1.5px;
+
           word-break: break-word;
-          max-width: 100%;
         }
 
         .subtitle {
-          font-size: 1.2rem;
-          opacity: 0.9;
-          margin-top: 10px;
-          word-break: break-word;
-          max-width: 100%;
+          width: 100%;
+          max-width: 700px;
+
+          margin: 16px auto 0;
+
+          font-size: clamp(
+            0.9rem,
+            3vw,
+            1.25rem
+          );
+
+          line-height: 1.6;
+          font-weight: 400;
+
+          opacity: 0.92;
+
+          overflow-wrap: anywhere;
         }
 
+        .mobileBreak {
+          display: none;
+        }
+
+        /* ================================
+           BUTTONS
+        ================================= */
+
         .buttonGroup {
-          margin-top: 25px;
-          display: flex;
-          gap: 12px;
-          justify-content: center;
-          flex-wrap: wrap;
           width: 100%;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          gap: 14px;
+
+          margin-top: 30px;
+
+          flex-wrap: wrap;
         }
 
         .btn {
-          display: inline-block;
-          padding: 12px 24px;
-          background: white;
-          color: #764ba2;
-          text-decoration: none;
-          border-radius: 30px;
-          font-weight: bold;
-          transition: transform 0.3s, box-shadow 0.3s;
-          border: none;
-          cursor: pointer;
+          min-height: 50px;
+
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+
+          padding: 13px 24px;
+
+          border-radius: 999px;
+
           font-size: 15px;
-          min-width: 130px;
-          text-align: center;
-          box-sizing: border-box;
-          flex: 0 1 auto;
+          font-weight: 700;
+
+          text-decoration: none;
+
+          cursor: pointer;
+
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+
+          white-space: nowrap;
+
+          touch-action: manipulation;
+
+          -webkit-user-select: none;
+          user-select: none;
+        }
+
+        .btn span {
+          font-size: 17px;
+        }
+
+        .btnPrimary {
+          color: #62419b;
+          background: #ffffff;
+
+          border: 2px solid #ffffff;
+
+          box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .btnSecondary {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.05);
+
+          border: 2px solid rgba(255, 255, 255, 0.9);
         }
 
         .btn:hover {
-          transform: scale(1.05);
-          box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+          transform: translateY(-3px);
         }
 
-        .btn-secondary {
-          background: transparent;
-          color: white;
-          border: 2px solid white;
+        .btnPrimary:hover {
+          box-shadow:
+            0 12px 28px rgba(0, 0, 0, 0.18);
         }
 
-        .btn-secondary:hover {
-          background: rgba(255,255,255,0.1);
+        .btnSecondary:hover {
+          background: rgba(255, 255, 255, 0.15);
         }
+
+        .btn:active {
+          transform: scale(0.97);
+        }
+
+        /* ================================
+           STATUS
+        ================================= */
 
         .status {
-          margin-top: 25px;
-          padding: 12px 16px;
-          background: rgba(255,255,255,0.2);
-          border-radius: 10px;
           width: 100%;
-          max-width: 100%;
-          box-sizing: border-box;
+          max-width: 520px;
+
+          margin: 28px auto 0;
+
+          padding: 14px 18px;
+
+          border-radius: 14px;
+
+          background: rgba(255, 255, 255, 0.12);
+
+          border: 1px solid
+            rgba(255, 255, 255, 0.15);
+
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
         }
 
-        .status p {
-          word-break: break-word;
+        .statusTop {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          gap: 8px;
+
+          font-size: clamp(
+            0.82rem,
+            2.8vw,
+            0.98rem
+          );
+
+          line-height: 1.4;
+        }
+
+        .statusDot {
+          width: 9px;
+          height: 9px;
+
+          flex: 0 0 9px;
+
+          border-radius: 50%;
+
+          background: #4ade80;
+
+          box-shadow:
+            0 0 0 4px rgba(74, 222, 128, 0.15);
+
+          animation: pulse 2s infinite;
         }
 
         .status small {
-          opacity: 0.8;
           display: block;
-          margin-top: 4px;
+
+          margin-top: 5px;
+
+          font-size: clamp(
+            0.72rem,
+            2.4vw,
+            0.82rem
+          );
+
+          opacity: 0.75;
         }
 
-        /* Features */
+        @keyframes pulse {
+          0% {
+            box-shadow:
+              0 0 0 0
+                rgba(74, 222, 128, 0.4);
+          }
+
+          70% {
+            box-shadow:
+              0 0 0 7px
+                rgba(74, 222, 128, 0);
+          }
+
+          100% {
+            box-shadow:
+              0 0 0 0
+                rgba(74, 222, 128, 0);
+          }
+        }
+
+        /* ================================
+           FEATURES
+        ================================= */
+
         .features {
-          margin-top: 40px;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 16px;
           width: 100%;
-          max-width: 800px;
-          padding: 0 4px;
-          box-sizing: border-box;
+          max-width: 900px;
+
+          display: grid;
+
+          grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+          gap: 18px;
+
+          margin-top: 30px;
         }
 
         .featureCard {
-          padding: 20px 12px;
-          text-align: center;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-          transition: transform 0.3s, box-shadow 0.3s;
-          box-sizing: border-box;
           width: 100%;
+          min-width: 0;
+
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          text-align: center;
+
+          padding: 25px 16px;
+
+          background: #ffffff;
+
+          border: 1px solid
+            rgba(0, 0, 0, 0.05);
+
+          border-radius: 18px;
+
+          box-shadow:
+            0 6px 25px
+              rgba(0, 0, 0, 0.05);
+
+          transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
         }
 
         .featureCard:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+          transform: translateY(-5px);
+
+          box-shadow:
+            0 15px 35px
+              rgba(0, 0, 0, 0.1);
+        }
+
+        .featureIcon {
+          width: 52px;
+          height: 52px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          margin-bottom: 12px;
+
+          border-radius: 14px;
+
+          background: #f5f6ff;
+
+          font-size: 25px;
         }
 
         .featureCard h3 {
-          margin: 0 0 8px 0;
-          color: #333;
-          font-size: 1.1rem;
-          word-break: break-word;
+          margin: 0 0 7px;
+
+          color: #222;
+
+          font-size: clamp(
+            1rem,
+            2.5vw,
+            1.15rem
+          );
+
+          line-height: 1.3;
         }
 
         .featureCard p {
           margin: 0;
+
           color: #666;
-          font-size: 0.9rem;
-          word-break: break-word;
+
+          font-size: clamp(
+            0.78rem,
+            2vw,
+            0.9rem
+          );
+
+          line-height: 1.5;
+
+          overflow-wrap: anywhere;
         }
 
-        /* Footer */
+        /* ================================
+           FOOTER
+        ================================= */
+
         .footer {
           width: 100%;
           max-width: 1200px;
-          padding: 20px 0;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-top: 20px;
-          box-sizing: border-box;
+
+          margin: 0 auto;
+
+          padding: 20px 16px 25px;
+
+          text-align: center;
+
+          border-top: 1px solid
+            rgba(0, 0, 0, 0.07);
         }
 
         .footer p {
-          color: #666;
-          font-size: 0.9rem;
-          text-align: center;
-          word-break: break-word;
-          padding: 0 16px;
+          margin: 0;
+
+          color: #777;
+
+          font-size: 0.85rem;
+
+          line-height: 1.5;
+
+          overflow-wrap: anywhere;
         }
 
-        /* ✅ Mobile Responsive Fix */
+        /* ================================
+           TABLET
+        ================================= */
+
         @media (max-width: 768px) {
-          .container {
-            padding: 0 12px;
+          .main {
+            padding: 25px 14px 35px;
           }
 
           .hero {
-            padding: 28px 14px;
-            border-radius: 16px;
+            max-width: 650px;
+          }
+
+          .heroContent {
+            padding: 40px 22px;
+          }
+
+          .mobileBreak {
+            display: block;
+          }
+
+          .buttonGroup {
+            flex-direction: column;
+
+            width: 100%;
+
+            gap: 10px;
+          }
+
+          .btn {
+            width: 100%;
+            max-width: 340px;
+          }
+
+          .features {
+            grid-template-columns:
+              repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+          }
+
+          .featureCard:last-child {
+            grid-column: 1 / -1;
+
+            max-width: 100%;
+          }
+        }
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 480px) {
+          .main {
+            padding: 14px 10px 25px;
+          }
+
+          .hero {
+            border-radius: 18px;
+          }
+
+          .heroContent {
+            padding: 30px 15px;
+          }
+
+          .logoIcon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+          }
+
+          .title {
+            font-size: 2rem;
+            letter-spacing: -0.8px;
+          }
+
+          .subtitle {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+          }
+
+          .buttonGroup {
+            margin-top: 24px;
+          }
+
+          .btn {
+            max-width: 100%;
+            min-height: 48px;
+            padding: 12px 16px;
+            font-size: 14px;
+          }
+
+          .status {
+            margin-top: 22px;
+            padding: 12px 10px;
+          }
+
+          .statusTop {
+            font-size: 0.8rem;
+          }
+
+          .status small {
+            font-size: 0.7rem;
+          }
+
+          .features {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+          }
+
+          .featureCard {
+            padding: 19px 14px;
+
+            flex-direction: row;
+
+            text-align: left;
+
+            justify-content: flex-start;
+
+            gap: 14px;
+          }
+
+          .featureIcon {
+            width: 46px;
+            height: 46px;
+
+            flex: 0 0 46px;
+
+            margin: 0;
+
+            font-size: 22px;
+          }
+
+          .featureCard h3 {
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+          }
+
+          .featureCard p {
+            font-size: 0.8rem;
+          }
+
+          .featureCard:last-child {
+            grid-column: auto;
+          }
+
+          .footer {
+            padding: 18px 10px 22px;
+          }
+
+          .footer p {
+            font-size: 0.75rem;
+          }
+        }
+
+        /* ================================
+           VERY SMALL MOBILE
+        ================================= */
+
+        @media (max-width: 360px) {
+          .main {
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+
+          .heroContent {
+            padding: 25px 12px;
+          }
+
+          .logoIcon {
+            font-size: 2.2rem;
+          }
+
+          .title {
+            font-size: 1.75rem;
+          }
+
+          .subtitle {
+            font-size: 0.78rem;
+          }
+
+          .btn {
+            min-height: 45px;
+            padding: 10px 12px;
+            font-size: 13px;
+          }
+
+          .statusTop {
+            font-size: 0.72rem;
+          }
+
+          .status small {
+            font-size: 0.65rem;
+          }
+
+          .featureCard {
+            padding: 15px 12px;
+            gap: 10px;
+          }
+
+          .featureIcon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            font-size: 19px;
+          }
+
+          .featureCard h3 {
+            font-size: 0.9rem;
+          }
+
+          .featureCard p {
+            font-size: 0.73rem;
+          }
+        }
+
+        /* ================================
+           LANDSCAPE MOBILE
+        ================================= */
+
+        @media (max-height: 600px) and (orientation: landscape) {
+          .main {
+            padding-top: 15px;
+            padding-bottom: 20px;
+          }
+
+          .heroContent {
+            padding: 25px 20px;
+          }
+
+          .logoIcon {
+            display: none;
           }
 
           .title {
@@ -263,136 +836,41 @@ export default function Home() {
           }
 
           .subtitle {
-            font-size: 1rem;
+            margin-top: 8px;
           }
 
           .buttonGroup {
-            gap: 10px;
+            margin-top: 16px;
+            flex-direction: row;
           }
 
           .btn {
-            padding: 10px 18px;
-            font-size: 14px;
-            min-width: 110px;
-          }
-
-          .features {
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 0 2px;
-          }
-
-          .featureCard {
-            padding: 16px 10px;
-          }
-
-          .featureCard h3 {
-            font-size: 1rem;
-          }
-
-          .featureCard p {
-            font-size: 0.85rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .container {
-            padding: 0 8px;
-          }
-
-          .hero {
-            padding: 20px 12px;
-            border-radius: 12px;
-          }
-
-          .title {
-            font-size: 1.6rem;
-          }
-
-          .subtitle {
-            font-size: 0.85rem;
-          }
-
-          .features {
-            grid-template-columns: 1fr;
-            gap: 10px;
-            padding: 0;
-          }
-
-          .btn {
-            padding: 10px 14px;
-            font-size: 13px;
-            min-width: 90px;
-            flex: 1 1 100%;
-          }
-
-          .buttonGroup {
-            flex-direction: column;
-            align-items: stretch;
-            width: 100%;
-            gap: 8px;
+            width: auto;
           }
 
           .status {
-            padding: 10px 12px;
-            font-size: 0.85rem;
+            margin-top: 16px;
           }
 
-          .status small {
-            font-size: 0.75rem;
-          }
-
-          .featureCard {
-            padding: 14px 10px;
-          }
-
-          .featureCard h3 {
-            font-size: 0.95rem;
-          }
-
-          .featureCard p {
-            font-size: 0.8rem;
-          }
-
-          .footer p {
-            font-size: 0.8rem;
-            padding: 0 12px;
+          .features {
+            margin-top: 18px;
           }
         }
 
-        /* Extra small devices */
-        @media (max-width: 360px) {
-          .title {
-            font-size: 1.3rem;
-          }
+        /* ================================
+           REDUCED MOTION
+        ================================= */
 
-          .subtitle {
-            font-size: 0.75rem;
-          }
-
-          .btn {
-            font-size: 12px;
-            padding: 8px 12px;
-            min-width: 70px;
-          }
-
-          .hero {
-            padding: 16px 10px;
-          }
-
-          .featureCard {
-            padding: 12px 8px;
-          }
-
-          .featureCard h3 {
-            font-size: 0.85rem;
-          }
-
-          .featureCard p {
-            font-size: 0.75rem;
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
           }
         }
       `}</style>
-    </div>
+    </>
   )
-                }
+          }

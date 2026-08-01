@@ -6,7 +6,7 @@ export default function Home() {
     <div className="container">
       <Head>
         <title>TechStar - Electrical & Electronics Marketplace</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
       </Head>
 
       <main className="main">
@@ -64,6 +64,11 @@ export default function Home() {
           box-sizing: border-box;
         }
 
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
+        }
+
         .container {
           min-height: 100vh;
           padding: 0 16px;
@@ -72,6 +77,9 @@ export default function Home() {
           justify-content: center;
           align-items: center;
           background: #f8f9fa;
+          width: 100%;
+          max-width: 100vw;
+          overflow-x: hidden;
         }
 
         .main {
@@ -90,18 +98,20 @@ export default function Home() {
           text-align: center;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
-          padding: 40px 24px;
+          padding: 40px 20px;
           border-radius: 20px;
           width: 100%;
           max-width: 800px;
           margin: 0 auto;
+          box-sizing: border-box;
         }
 
         .title {
           margin: 0;
-          line-height: 1.15;
-          font-size: 3rem;
+          line-height: 1.2;
+          font-size: 2.8rem;
           word-break: break-word;
+          max-width: 100%;
         }
 
         .subtitle {
@@ -109,6 +119,7 @@ export default function Home() {
           opacity: 0.9;
           margin-top: 10px;
           word-break: break-word;
+          max-width: 100%;
         }
 
         .buttonGroup {
@@ -117,11 +128,12 @@ export default function Home() {
           gap: 12px;
           justify-content: center;
           flex-wrap: wrap;
+          width: 100%;
         }
 
         .btn {
           display: inline-block;
-          padding: 12px 28px;
+          padding: 12px 24px;
           background: white;
           color: #764ba2;
           text-decoration: none;
@@ -131,8 +143,10 @@ export default function Home() {
           border: none;
           cursor: pointer;
           font-size: 15px;
-          min-width: 140px;
+          min-width: 130px;
           text-align: center;
+          box-sizing: border-box;
+          flex: 0 1 auto;
         }
 
         .btn:hover {
@@ -152,9 +166,16 @@ export default function Home() {
 
         .status {
           margin-top: 25px;
-          padding: 12px 20px;
+          padding: 12px 16px;
           background: rgba(255,255,255,0.2);
           border-radius: 10px;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .status p {
+          word-break: break-word;
         }
 
         .status small {
@@ -167,20 +188,23 @@ export default function Home() {
         .features {
           margin-top: 40px;
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 16px;
           width: 100%;
           max-width: 800px;
-          padding: 0 8px;
+          padding: 0 4px;
+          box-sizing: border-box;
         }
 
         .featureCard {
-          padding: 20px 16px;
+          padding: 20px 12px;
           text-align: center;
           background: white;
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.06);
           transition: transform 0.3s, box-shadow 0.3s;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .featureCard:hover {
@@ -192,12 +216,14 @@ export default function Home() {
           margin: 0 0 8px 0;
           color: #333;
           font-size: 1.1rem;
+          word-break: break-word;
         }
 
         .featureCard p {
           margin: 0;
           color: #666;
           font-size: 0.9rem;
+          word-break: break-word;
         }
 
         /* Footer */
@@ -210,27 +236,30 @@ export default function Home() {
           justify-content: center;
           align-items: center;
           margin-top: 20px;
+          box-sizing: border-box;
         }
 
         .footer p {
           color: #666;
           font-size: 0.9rem;
           text-align: center;
+          word-break: break-word;
+          padding: 0 16px;
         }
 
-        /* ✅ Mobile Responsive (ফিক্স) */
+        /* ✅ Mobile Responsive Fix */
         @media (max-width: 768px) {
           .container {
             padding: 0 12px;
           }
 
           .hero {
-            padding: 30px 16px;
+            padding: 28px 14px;
             border-radius: 16px;
           }
 
           .title {
-            font-size: 2.2rem;
+            font-size: 2rem;
           }
 
           .subtitle {
@@ -242,19 +271,19 @@ export default function Home() {
           }
 
           .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             font-size: 14px;
-            min-width: 120px;
+            min-width: 110px;
           }
 
           .features {
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            padding: 0 4px;
+            padding: 0 2px;
           }
 
           .featureCard {
-            padding: 16px 12px;
+            padding: 16px 10px;
           }
 
           .featureCard h3 {
@@ -267,41 +296,103 @@ export default function Home() {
         }
 
         @media (max-width: 480px) {
+          .container {
+            padding: 0 8px;
+          }
+
+          .hero {
+            padding: 20px 12px;
+            border-radius: 12px;
+          }
+
           .title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
           }
 
           .subtitle {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
           }
 
           .features {
             grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 0;
           }
 
           .btn {
-            padding: 10px 16px;
+            padding: 10px 14px;
             font-size: 13px;
-            min-width: 100px;
-            width: 100%;
+            min-width: 90px;
+            flex: 1 1 100%;
           }
 
           .buttonGroup {
             flex-direction: column;
             align-items: stretch;
             width: 100%;
-          }
-
-          .hero {
-            padding: 24px 12px;
+            gap: 8px;
           }
 
           .status {
-            padding: 10px 16px;
-            font-size: 0.9rem;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+          }
+
+          .status small {
+            font-size: 0.75rem;
+          }
+
+          .featureCard {
+            padding: 14px 10px;
+          }
+
+          .featureCard h3 {
+            font-size: 0.95rem;
+          }
+
+          .featureCard p {
+            font-size: 0.8rem;
+          }
+
+          .footer p {
+            font-size: 0.8rem;
+            padding: 0 12px;
+          }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 360px) {
+          .title {
+            font-size: 1.3rem;
+          }
+
+          .subtitle {
+            font-size: 0.75rem;
+          }
+
+          .btn {
+            font-size: 12px;
+            padding: 8px 12px;
+            min-width: 70px;
+          }
+
+          .hero {
+            padding: 16px 10px;
+          }
+
+          .featureCard {
+            padding: 12px 8px;
+          }
+
+          .featureCard h3 {
+            font-size: 0.85rem;
+          }
+
+          .featureCard p {
+            font-size: 0.75rem;
           }
         }
       `}</style>
     </div>
   )
-}
+                }

@@ -25,22 +25,17 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    try {
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
+    const result = await signIn('credentials', {
+      email: formData.email,
+      password: formData.password,
+      redirect: false,
+    });
 
-      if (result.error) {
-        setError(result.error);
-        setLoading(false);
-      } else {
-        router.push('/');
-      }
-    } catch (error) {
-      setError('Something went wrong');
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
+    } else {
+      router.push('/');
     }
   };
 
@@ -86,25 +81,6 @@ export default function Login() {
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-
-          <div className="divider">
-            <span>or continue with</span>
-          </div>
-
-          <div className="socialButtons">
-            <button
-              onClick={() => signIn('google', { callbackUrl: '/' })}
-              className="btn btn-google"
-            >
-              🅶 Google
-            </button>
-            <button
-              onClick={() => signIn('github', { callbackUrl: '/' })}
-              className="btn btn-github"
-            >
-              🐙 GitHub
-            </button>
-          </div>
 
           <p className="footerText">
             Don't have an account? <Link href="/auth/register">Register</Link>
@@ -205,60 +181,6 @@ export default function Login() {
           cursor: not-allowed;
         }
 
-        .divider {
-          text-align: center;
-          margin: 20px 0;
-          position: relative;
-        }
-
-        .divider span {
-          background: white;
-          padding: 0 12px;
-          color: #999;
-          font-size: 14px;
-        }
-
-        .divider::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 0;
-          right: 0;
-          height: 1px;
-          background: #e0e0e0;
-          z-index: -1;
-        }
-
-        .socialButtons {
-          display: flex;
-          gap: 12px;
-        }
-
-        .socialButtons .btn {
-          flex: 1;
-          padding: 10px;
-          font-size: 14px;
-        }
-
-        .btn-google {
-          background: #fff;
-          border: 2px solid #ddd;
-          color: #333;
-        }
-
-        .btn-google:hover {
-          background: #f5f5f5;
-        }
-
-        .btn-github {
-          background: #333;
-          color: white;
-        }
-
-        .btn-github:hover {
-          background: #444;
-        }
-
         .footerText {
           text-align: center;
           margin-top: 20px;
@@ -284,12 +206,8 @@ export default function Login() {
           h1 {
             font-size: 1.6rem;
           }
-
-          .socialButtons {
-            flex-direction: column;
-          }
         }
       `}</style>
     </>
   );
-                  }
+}

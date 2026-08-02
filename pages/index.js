@@ -1,12 +1,13 @@
-import Head from 'next/head'
-import Link from 'next/link'
+import Head from 'next/head';
+import Link from 'next/link';
+import Header from '../components/Header';
 
 export default function Home() {
   return (
     <div className="container">
+      <Header />
       <Head>
         <title>TechStar - Electrical & Electronics Marketplace</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
       </Head>
 
       <main className="main">
@@ -57,16 +58,10 @@ export default function Home() {
       </footer>
 
       <style jsx>{`
-        /* Reset and Base */
         * {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
-        }
-
-        html, body {
-          overflow-x: hidden;
-          width: 100%;
         }
 
         .container {
@@ -93,7 +88,6 @@ export default function Home() {
           max-width: 1200px;
         }
 
-        /* Hero Section */
         .hero {
           text-align: center;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -184,7 +178,6 @@ export default function Home() {
           margin-top: 4px;
         }
 
-        /* Features */
         .features {
           margin-top: 40px;
           display: grid;
@@ -226,7 +219,6 @@ export default function Home() {
           word-break: break-word;
         }
 
-        /* Footer */
         .footer {
           width: 100%;
           max-width: 1200px;
@@ -247,12 +239,7 @@ export default function Home() {
           padding: 0 16px;
         }
 
-        /* ✅ Mobile Responsive Fix */
         @media (max-width: 768px) {
-          .container {
-            padding: 0 12px;
-          }
-
           .hero {
             padding: 28px 14px;
             border-radius: 16px;
@@ -266,10 +253,6 @@ export default function Home() {
             font-size: 1rem;
           }
 
-          .buttonGroup {
-            gap: 10px;
-          }
-
           .btn {
             padding: 10px 18px;
             font-size: 14px;
@@ -279,19 +262,6 @@ export default function Home() {
           .features {
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            padding: 0 2px;
-          }
-
-          .featureCard {
-            padding: 16px 10px;
-          }
-
-          .featureCard h3 {
-            font-size: 1rem;
-          }
-
-          .featureCard p {
-            font-size: 0.85rem;
           }
         }
 
@@ -316,7 +286,6 @@ export default function Home() {
           .features {
             grid-template-columns: 1fr;
             gap: 10px;
-            padding: 0;
           }
 
           .btn {
@@ -333,66 +302,11 @@ export default function Home() {
             gap: 8px;
           }
 
-          .status {
-            padding: 10px 12px;
-            font-size: 0.85rem;
-          }
-
-          .status small {
-            font-size: 0.75rem;
-          }
-
-          .featureCard {
-            padding: 14px 10px;
-          }
-
-          .featureCard h3 {
-            font-size: 0.95rem;
-          }
-
-          .featureCard p {
-            font-size: 0.8rem;
-          }
-
           .footer p {
             font-size: 0.8rem;
-            padding: 0 12px;
-          }
-        }
-
-        /* Extra small devices */
-        @media (max-width: 360px) {
-          .title {
-            font-size: 1.3rem;
-          }
-
-          .subtitle {
-            font-size: 0.75rem;
-          }
-
-          .btn {
-            font-size: 12px;
-            padding: 8px 12px;
-            min-width: 70px;
-          }
-
-          .hero {
-            padding: 16px 10px;
-          }
-
-          .featureCard {
-            padding: 12px 8px;
-          }
-
-          .featureCard h3 {
-            font-size: 0.85rem;
-          }
-
-          .featureCard p {
-            font-size: 0.75rem;
           }
         }
       `}</style>
     </div>
-  )
-    }
+  );
+}

@@ -38,6 +38,7 @@ export default function Header() {
           position: sticky;
           top: 0;
           z-index: 100;
+          width: 100%;
         }
 
         .headerContent {
@@ -47,6 +48,7 @@ export default function Header() {
           justify-content: space-between;
           align-items: center;
           padding: 12px 0;
+          flex-wrap: wrap;
         }
 
         .logo {
@@ -58,7 +60,7 @@ export default function Header() {
 
         .nav {
           display: flex;
-          gap: 16px;
+          gap: 12px;
           align-items: center;
           flex-wrap: wrap;
         }
@@ -107,15 +109,15 @@ export default function Header() {
           }
 
           .nav {
-            gap: 8px;
+            gap: 6px;
           }
 
           .navLink {
             font-size: 12px;
-            padding: 4px 10px;
+            padding: 4px 8px;
           }
         }
       `}</style>
     </header>
   );
-            }
+}

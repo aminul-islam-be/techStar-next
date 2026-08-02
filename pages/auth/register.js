@@ -28,7 +28,6 @@ export default function Register() {
     setSuccess('');
     setLoading(true);
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);

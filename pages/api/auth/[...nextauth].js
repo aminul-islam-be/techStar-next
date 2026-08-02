@@ -11,7 +11,7 @@ export default NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        email: { label: 'Email', type: 'email', placeholder: 'example@email.com' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {

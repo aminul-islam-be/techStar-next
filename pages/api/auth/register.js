@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
-import dbConnect from '@/lib/db';
-import User from '@/models/User';
+import dbConnect from '../../../lib/db';
+import User from '../../../models/User';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,7 +12,6 @@ export default async function handler(req, res) {
 
     const { name, email, password } = req.body;
 
-    // Validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please provide all fields' });
     }
@@ -21,16 +20,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
 
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
     const user = await User.create({
       name,
       email,

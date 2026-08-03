@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
-    // ডেমো পণ্য
     const demoProducts = [
       {
         name: 'Smart LED Bulb',
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
         price: 12.99,
         category: 'Electronics',
         stock: 50,
-        vendor: '507f1f77bcf86cd799439011', // ডেমো ইউজার ID
+        vendor: '507f1f77bcf86cd799439011',
         images: [],
         isAvailable: true,
       },
@@ -73,10 +72,7 @@ export default async function handler(req, res) {
       },
     ];
 
-    // Delete existing products
     await Product.deleteMany({});
-
-    // Insert demo products
     const products = await Product.insertMany(demoProducts);
 
     res.status(201).json({
@@ -88,4 +84,4 @@ export default async function handler(req, res) {
     console.error('Seed error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-          }
+}

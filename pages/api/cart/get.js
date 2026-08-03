@@ -16,7 +16,12 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    let cart = await Cart.findOne({ user: session.user.id }).populate('items.product');
+    const userId = session.user?.id || session.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'User ID not found' });
+    }
+
+    let cart = await Cart.findOne({ user: userId }).populate('items.product');
 
     if (!cart) {
       cart = {
@@ -34,4 +39,4 @@ export default async function handler(req, res) {
     console.error('Cart get error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-}
+      }

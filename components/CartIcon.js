@@ -1,0 +1,58 @@
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+
+export default function CartIcon() {
+  const { data: session } = useSession();
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    if (session) {
+      fetchCartCount();
+    }
+  }, [session]);
+
+  const fetchCartCount = async () => {
+    try {
+      const res = await fetch('/api/cart/get');
+      const data = await res.json();
+      if (data.success) {
+        setItemCount(data.cart.totalItems || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+    }
+  };
+
+  return (
+    <Link href="/cart" className="cartIcon">
+      🛒
+      {itemCount > 0 && <span className="badge">{itemCount}</span>}
+      <style jsx>{`
+        .cartIcon {
+          position: relative;
+          font-size: 1.5rem;
+          text-decoration: none;
+          color: #333;
+          padding: 4px 8px;
+        }
+
+        .badge {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background: #e74c3c;
+          color: white;
+          font-size: 11px;
+          font-weight: 700;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+    </Link>
+  );
+}

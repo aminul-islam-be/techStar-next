@@ -17,7 +17,6 @@ export default function AdminProducts() {
       router.push('/auth/login');
       return;
     }
-
     if (status === 'authenticated') {
       if (session.user.role !== 'admin') {
         router.push('/');
@@ -43,12 +42,9 @@ export default function AdminProducts() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-
     setDeleting(id);
     try {
-      const res = await fetch(`/api/admin/products/${id}`, {
-        method: 'DELETE',
-      });
+      const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         setProducts(products.filter(p => p._id !== id));
@@ -86,7 +82,6 @@ export default function AdminProducts() {
             + Add New Product
           </Link>
         </div>
-
         {products.length === 0 ? (
           <div className="noProducts">
             <p>No products found.</p>
@@ -147,7 +142,6 @@ export default function AdminProducts() {
           margin: 0 auto;
           padding: 20px 16px;
         }
-
         .headerRow {
           display: flex;
           justify-content: space-between;
@@ -156,13 +150,11 @@ export default function AdminProducts() {
           gap: 12px;
           margin-bottom: 24px;
         }
-
         h1 {
           margin: 0;
           font-size: 2rem;
           color: #333;
         }
-
         .btn {
           display: inline-block;
           padding: 10px 24px;
@@ -175,11 +167,9 @@ export default function AdminProducts() {
           cursor: pointer;
           transition: opacity 0.3s;
         }
-
         .btn:hover {
           opacity: 0.9;
         }
-
         .loading {
           display: flex;
           justify-content: center;
@@ -188,7 +178,6 @@ export default function AdminProducts() {
           font-size: 1.2rem;
           color: #666;
         }
-
         .noProducts {
           text-align: center;
           padding: 60px 20px;
@@ -196,26 +185,22 @@ export default function AdminProducts() {
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
         .noProducts p {
           font-size: 1.1rem;
           color: #666;
           margin-bottom: 20px;
         }
-
         .tableWrapper {
           background: white;
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
           overflow-x: auto;
         }
-
         .productTable {
           width: 100%;
           border-collapse: collapse;
           min-width: 600px;
         }
-
         .productTable th {
           background: #f8f9fa;
           padding: 12px 16px;
@@ -224,33 +209,27 @@ export default function AdminProducts() {
           color: #333;
           border-bottom: 2px solid #eaeaea;
         }
-
         .productTable td {
           padding: 12px 16px;
           border-bottom: 1px solid #f0f0f0;
           color: #555;
         }
-
         .productTable tr:hover td {
           background: #fafafa;
         }
-
         .statusActive {
           color: #28a745;
           font-weight: 600;
         }
-
         .statusInactive {
           color: #dc3545;
           font-weight: 600;
         }
-
         .actions {
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
         }
-
         .btnEdit {
           padding: 4px 12px;
           background: #667eea;
@@ -261,11 +240,9 @@ export default function AdminProducts() {
           border: none;
           cursor: pointer;
         }
-
         .btnEdit:hover {
           background: #5a6fd6;
         }
-
         .btnDelete {
           padding: 4px 12px;
           background: #dc3545;
@@ -275,26 +252,21 @@ export default function AdminProducts() {
           font-size: 13px;
           cursor: pointer;
         }
-
         .btnDelete:hover:not(:disabled) {
           background: #c82333;
         }
-
         .btnDelete:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
-
         @media (max-width: 600px) {
           .headerRow {
             flex-direction: column;
             align-items: stretch;
           }
-
           .btn {
             text-align: center;
           }
-
           .actions {
             flex-direction: column;
           }
@@ -302,4 +274,4 @@ export default function AdminProducts() {
       `}</style>
     </>
   );
-}
+          }

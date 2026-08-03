@@ -18,6 +18,9 @@ export default function Home() {
           </p>
           
           <div className="buttonGroup">
+            <Link href="/products" className="btn btn-primary">
+              📦 Products
+            </Link>
             <Link href="/admin" className="btn btn-primary">
               🔐 Admin Panel
             </Link>
@@ -309,4 +312,4 @@ export default function Home() {
       `}</style>
     </div>
   );
-}
+                }

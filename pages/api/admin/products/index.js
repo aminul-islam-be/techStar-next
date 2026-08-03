@@ -8,12 +8,10 @@ export default async function handler(req, res) {
 
   const session = await getServerSession(req, res, authOptions);
   
-  // চেক করুন admin কিনা
   if (!session || session.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admin only.' });
   }
 
-  // GET: সব পণ্য দেখুন
   if (req.method === 'GET') {
     try {
       const products = await Product.find({}).sort({ createdAt: -1 });
@@ -25,10 +23,7 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
-
-  // POST: নতুন পণ্য যোগ করুন
-  else if (req.method === 'POST') {
+  } else if (req.method === 'POST') {
     try {
       const { name, description, price, category, stock, images } = req.body;
 
@@ -51,9 +46,7 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
-
-  else {
+  } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-        }
+}

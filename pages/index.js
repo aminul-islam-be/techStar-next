@@ -21,8 +21,11 @@ export default function Home() {
             <Link href="/products" className="btn btn-primary">
               📦 Products
             </Link>
+            <Link href="/admin" className="btn btn-primary">
+              📊 Dashboard
+            </Link>
             <Link href="/admin/products" className="btn btn-primary">
-              🔐 Admin Panel
+              📋 Manage Products
             </Link>
             <a 
               href="https://github.com/aminul-islam-be/techStar" 
@@ -312,4 +315,4 @@ export default function Home() {
       `}</style>
     </div>
   );
-                }
+    }

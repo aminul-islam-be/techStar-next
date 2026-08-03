@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import './Product'; // ✅ Product মডেল ইম্পোর্ট করুন
 
 const CartItemSchema = new mongoose.Schema({
   product: {

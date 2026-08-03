@@ -6,46 +6,45 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState({});
+  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
+    setLoading(true);
     try {
       const res = await fetch('/api/products');
       const data = await res.json();
       if (data.success) {
         setProducts(data.products);
-      } else {
-        // যদি কোনো পণ্য না থাকে, তাহলে seed করুন
-        await seedProducts();
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      // Error হলে seed চেষ্টা করুন
-      await seedProducts();
     } finally {
       setLoading(false);
     }
   };
 
   const seedProducts = async () => {
+    setSeeding(true);
     try {
       const res = await fetch('/api/products/seed', {
         method: 'POST',
       });
       const data = await res.json();
       if (data.success) {
-        // আবার পণ্য লোড করুন
-        const productsRes = await fetch('/api/products');
-        const productsData = await productsRes.json();
-        if (productsData.success) {
-          setProducts(productsData.products);
-        }
+        alert(`✅ ${data.products.length} products added!`);
+        await fetchProducts();
+      } else {
+        alert('❌ Failed to seed products');
       }
     } catch (error) {
       console.error('Seed error:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -89,12 +88,21 @@ export default function ProductsPage() {
       </Head>
       <Header />
       <div className="container">
-        <h1>📦 Our Products</h1>
-        <div className="productGrid">
-          {products.length === 0 ? (
-            <p className="noProducts">No products available.</p>
-          ) : (
-            products.map((product) => (
+        <div className="headerRow">
+          <h1>📦 Our Products</h1>
+          <button onClick={seedProducts} disabled={seeding} className="seedBtn">
+            {seeding ? 'Loading...' : '📥 Load Demo Products'}
+          </button>
+        </div>
+
+        {products.length === 0 ? (
+          <div className="noProducts">
+            <p>No products available.</p>
+            <p className="hint">Click "Load Demo Products" to add sample products.</p>
+          </div>
+        ) : (
+          <div className="productGrid">
+            {products.map((product) => (
               <div key={product._id} className="productCard">
                 <div className="productImage">
                   <div className="noImage">📷</div>
@@ -110,9 +118,9 @@ export default function ProductsPage() {
                   {adding[product._id] ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart 🛒'}
                 </button>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -122,10 +130,39 @@ export default function ProductsPage() {
           padding: 20px 16px;
         }
 
+        .headerRow {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 24px;
+        }
+
         h1 {
+          margin: 0;
           font-size: 2rem;
           color: #333;
-          margin-bottom: 24px;
+        }
+
+        .seedBtn {
+          padding: 10px 24px;
+          background: #28a745;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+
+        .seedBtn:hover:not(:disabled) {
+          background: #218838;
+        }
+
+        .seedBtn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         .loading {
@@ -139,9 +176,22 @@ export default function ProductsPage() {
 
         .noProducts {
           text-align: center;
-          color: #666;
+          padding: 60px 20px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .noProducts p {
           font-size: 1.1rem;
-          padding: 40px 0;
+          color: #666;
+          margin: 0;
+        }
+
+        .noProducts .hint {
+          font-size: 0.95rem;
+          color: #999;
+          margin-top: 8px;
         }
 
         .productGrid {
@@ -222,6 +272,16 @@ export default function ProductsPage() {
         }
 
         @media (max-width: 600px) {
+          .headerRow {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .seedBtn {
+            width: 100%;
+            text-align: center;
+          }
+
           .productGrid {
             grid-template-columns: 1fr 1fr;
             gap: 12px;

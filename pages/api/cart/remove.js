@@ -12,11 +12,11 @@ export default async function handler(req, res) {
     await dbConnect();
 
     const session = await getServerSession(req, res, authOptions);
-    if (!session) {
+    if (!session || !session.user) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    const userId = session.user?.id || session.user?._id;
+    const userId = session.user.id;
     if (!userId) {
       return res.status(401).json({ message: 'User ID not found' });
     }

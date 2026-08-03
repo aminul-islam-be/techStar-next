@@ -16,13 +16,18 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
+    const userId = session.user?.id || session.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'User ID not found' });
+    }
+
     const { productId } = req.body;
 
     if (!productId) {
       return res.status(400).json({ message: 'Product ID is required' });
     }
 
-    const cart = await Cart.findOne({ user: session.user.id });
+    const cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });

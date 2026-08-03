@@ -14,8 +14,17 @@ export default async function handler(req, res) {
 
     // Check authentication
     const session = await getServerSession(req, res, authOptions);
+    
     if (!session) {
       return res.status(401).json({ message: 'Please login first' });
+    }
+
+    // ইউজার আইডি বের করা
+    const userId = session.user?.id || session.user?._id;
+    
+    if (!userId) {
+      console.error('User ID not found in session:', session);
+      return res.status(401).json({ message: 'User ID not found. Please login again.' });
     }
 
     const { productId, quantity = 1 } = req.body;
@@ -36,11 +45,11 @@ export default async function handler(req, res) {
     }
 
     // Find or create cart
-    let cart = await Cart.findOne({ user: session.user.id });
+    let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
       cart = new Cart({
-        user: session.user.id,
+        user: userId,
         items: [],
       });
     }
@@ -76,4 +85,4 @@ export default async function handler(req, res) {
     console.error('Cart add error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-}
+    }

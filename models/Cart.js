@@ -40,7 +40,6 @@ const CartSchema = new mongoose.Schema({
   },
 });
 
-// Update totals before saving
 CartSchema.pre('save', function(next) {
   this.totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
   this.totalPrice = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);

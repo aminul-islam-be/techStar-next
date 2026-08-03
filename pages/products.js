@@ -13,63 +13,39 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      // ডেমো পণ্য — সঠিক ObjectId ফরম্যাটে (24 character hex)
-      const demoProducts = [
-        {
-          _id: '507f1f77bcf86cd799439011',
-          name: 'Smart LED Bulb',
-          category: 'Electronics',
-          price: 12.99,
-          stock: 50,
-          images: [],
-        },
-        {
-          _id: '507f1f77bcf86cd799439012',
-          name: 'Wireless Charger',
-          category: 'Electronics',
-          price: 24.99,
-          stock: 30,
-          images: [],
-        },
-        {
-          _id: '507f1f77bcf86cd799439013',
-          name: 'HDMI Cable 2m',
-          category: 'Components',
-          price: 8.99,
-          stock: 100,
-          images: [],
-        },
-        {
-          _id: '507f1f77bcf86cd799439014',
-          name: 'USB-C Hub 6-in-1',
-          category: 'Electronics',
-          price: 19.99,
-          stock: 20,
-          images: [],
-        },
-        {
-          _id: '507f1f77bcf86cd799439015',
-          name: 'Smart Plug WiFi',
-          category: 'Electrical',
-          price: 15.99,
-          stock: 40,
-          images: [],
-        },
-        {
-          _id: '507f1f77bcf86cd799439016',
-          name: 'Bluetooth Speaker',
-          category: 'Electronics',
-          price: 29.99,
-          stock: 15,
-          images: [],
-        },
-      ];
-      
-      setProducts(demoProducts);
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        // যদি কোনো পণ্য না থাকে, তাহলে seed করুন
+        await seedProducts();
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
+      // Error হলে seed চেষ্টা করুন
+      await seedProducts();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const seedProducts = async () => {
+    try {
+      const res = await fetch('/api/products/seed', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (data.success) {
+        // আবার পণ্য লোড করুন
+        const productsRes = await fetch('/api/products');
+        const productsData = await productsRes.json();
+        if (productsData.success) {
+          setProducts(productsData.products);
+        }
+      }
+    } catch (error) {
+      console.error('Seed error:', error);
     }
   };
 
@@ -267,4 +243,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-      }
+    }

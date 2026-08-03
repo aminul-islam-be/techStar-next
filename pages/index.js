@@ -21,7 +21,7 @@ export default function Home() {
             <Link href="/products" className="btn btn-primary">
               📦 Products
             </Link>
-            <Link href="/admin" className="btn btn-primary">
+            <Link href="/admin/products" className="btn btn-primary">
               🔐 Admin Panel
             </Link>
             <a 

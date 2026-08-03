@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import Header from '../components/Header';
 
 export default function ProductsPage() {
@@ -14,11 +13,59 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      if (data.success) {
-        setProducts(data.products);
-      }
+      // ডেমো পণ্যের জন্য API কল (পরে রিয়েল API যোগ করব)
+      const demoProducts = [
+        {
+          _id: '1',
+          name: 'Smart LED Bulb',
+          category: 'Electronics',
+          price: 12.99,
+          stock: 50,
+          images: [],
+        },
+        {
+          _id: '2',
+          name: 'Wireless Charger',
+          category: 'Electronics',
+          price: 24.99,
+          stock: 30,
+          images: [],
+        },
+        {
+          _id: '3',
+          name: 'HDMI Cable 2m',
+          category: 'Components',
+          price: 8.99,
+          stock: 100,
+          images: [],
+        },
+        {
+          _id: '4',
+          name: 'USB-C Hub 6-in-1',
+          category: 'Electronics',
+          price: 19.99,
+          stock: 20,
+          images: [],
+        },
+        {
+          _id: '5',
+          name: 'Smart Plug WiFi',
+          category: 'Electrical',
+          price: 15.99,
+          stock: 40,
+          images: [],
+        },
+        {
+          _id: '6',
+          name: 'Bluetooth Speaker',
+          category: 'Electronics',
+          price: 29.99,
+          stock: 15,
+          images: [],
+        },
+      ];
+      
+      setProducts(demoProducts);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -36,14 +83,15 @@ export default function ProductsPage() {
         body: JSON.stringify({ productId, quantity: 1 }),
       });
       const data = await res.json();
+
       if (data.success) {
-        alert('Product added to cart! 🎉');
+        alert('✅ Product added to cart!');
       } else {
         alert(data.message || 'Failed to add to cart');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Something went wrong');
+      alert('❌ Something went wrong');
     } finally {
       setAdding(prev => ({ ...prev, [productId]: false }));
     }
@@ -65,19 +113,15 @@ export default function ProductsPage() {
       </Head>
       <Header />
       <div className="container">
-        <h1>📦 Products</h1>
+        <h1>📦 Our Products</h1>
         <div className="productGrid">
           {products.length === 0 ? (
-            <p className="noProducts">No products available. Check back later!</p>
+            <p className="noProducts">No products available.</p>
           ) : (
             products.map((product) => (
               <div key={product._id} className="productCard">
                 <div className="productImage">
-                  {product.images && product.images.length > 0 ? (
-                    <img src={product.images[0]} alt={product.name} />
-                  ) : (
-                    <div className="noImage">📷</div>
-                  )}
+                  <div className="noImage">📷</div>
                 </div>
                 <h3>{product.name}</h3>
                 <p className="category">{product.category}</p>
@@ -126,8 +170,8 @@ export default function ProductsPage() {
 
         .productGrid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 24px;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 20px;
         }
 
         .productCard {
@@ -146,42 +190,35 @@ export default function ProductsPage() {
 
         .productImage {
           width: 100%;
-          height: 160px;
-          background: #f8f9fa;
+          height: 140px;
+          background: #f0f2f5;
           border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 12px;
-          overflow: hidden;
-        }
-
-        .productImage img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
         }
 
         .noImage {
-          font-size: 48px;
+          font-size: 40px;
           color: #ccc;
         }
 
         .productCard h3 {
           margin: 0 0 4px 0;
-          font-size: 1rem;
+          font-size: 0.95rem;
           color: #333;
-          min-height: 48px;
+          min-height: 44px;
         }
 
         .category {
           margin: 0 0 8px 0;
-          font-size: 0.85rem;
+          font-size: 0.8rem;
           color: #999;
         }
 
         .price {
-          font-size: 1.2rem;
+          font-size: 1.1rem;
           font-weight: 700;
           color: #667eea;
           margin: 0 0 12px 0;
@@ -196,7 +233,7 @@ export default function ProductsPage() {
           border-radius: 8px;
           font-weight: 600;
           cursor: pointer;
-          transition: background 0.3s, opacity 0.3s;
+          transition: opacity 0.3s;
         }
 
         .addBtn:hover:not(:disabled) {
@@ -211,7 +248,7 @@ export default function ProductsPage() {
         @media (max-width: 600px) {
           .productGrid {
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 12px;
           }
 
           .productCard {
@@ -219,15 +256,15 @@ export default function ProductsPage() {
           }
 
           .productImage {
-            height: 120px;
+            height: 100px;
           }
 
           .productCard h3 {
-            font-size: 0.9rem;
-            min-height: 40px;
+            font-size: 0.85rem;
+            min-height: 38px;
           }
         }
       `}</style>
     </>
   );
-    }
+  }

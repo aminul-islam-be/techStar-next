@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs';
 import dbConnect from '../../../lib/db';
 import User from '../../../models/User';
 
-// ✅ authOptions কনস্ট্যান্ট তৈরি করুন
 export const authOptions = {
   providers: [
     CredentialsProvider({
@@ -67,5 +66,4 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// ✅ ডিফল্ট এক্সপোর্ট
 export default NextAuth(authOptions);

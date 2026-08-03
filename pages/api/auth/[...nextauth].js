@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import dbConnect from '../../../lib/db';
 import User from '../../../models/User';
 
+// ✅ export const authOptions — ঠিক এইভাবে নাম দিন
 export const authOptions = {
   providers: [
     CredentialsProvider({

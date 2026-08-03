@@ -17,6 +17,11 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
+    const userId = session.user?.id || session.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: 'User ID not found' });
+    }
+
     const { productId, quantity } = req.body;
 
     if (!productId) {
@@ -27,7 +32,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Quantity must be at least 1' });
     }
 
-    // Check product stock
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -37,7 +41,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Insufficient stock' });
     }
 
-    const cart = await Cart.findOne({ user: session.user.id });
+    const cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
@@ -64,4 +68,4 @@ export default async function handler(req, res) {
     console.error('Cart update error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-  }
+}

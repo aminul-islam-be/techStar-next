@@ -177,7 +177,6 @@ export default function AddProduct() {
           margin: 0 auto;
           padding: 20px 16px;
         }
-
         .headerRow {
           display: flex;
           justify-content: space-between;
@@ -186,13 +185,11 @@ export default function AddProduct() {
           gap: 12px;
           margin-bottom: 24px;
         }
-
         h1 {
           margin: 0;
           font-size: 2rem;
           color: #333;
         }
-
         .btn {
           display: inline-block;
           padding: 10px 24px;
@@ -203,21 +200,17 @@ export default function AddProduct() {
           cursor: pointer;
           transition: opacity 0.3s;
         }
-
         .btn-primary {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
         }
-
         .btn-secondary {
           background: #6c757d;
           color: white;
         }
-
         .btn:hover {
           opacity: 0.9;
         }
-
         .error {
           background: #fee;
           color: #c00;
@@ -225,25 +218,21 @@ export default function AddProduct() {
           border-radius: 8px;
           margin-bottom: 16px;
         }
-
         .form {
           background: white;
           padding: 24px;
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
         .formGroup {
           margin-bottom: 16px;
         }
-
         .formGroup label {
           display: block;
           margin-bottom: 6px;
           font-weight: 600;
           color: #333;
         }
-
         .formGroup input,
         .formGroup textarea,
         .formGroup select {
@@ -256,26 +245,22 @@ export default function AddProduct() {
           box-sizing: border-box;
           font-family: inherit;
         }
-
         .formGroup input:focus,
         .formGroup textarea:focus,
         .formGroup select:focus {
           outline: none;
           border-color: #667eea;
         }
-
         .formRow {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 16px;
         }
-
         .btn {
           width: 100%;
           padding: 12px;
           font-size: 16px;
         }
-
         @media (max-width: 600px) {
           .formRow {
             grid-template-columns: 1fr;
@@ -284,4 +269,4 @@ export default function AddProduct() {
       `}</style>
     </>
   );
-                }
+          }

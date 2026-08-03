@@ -12,18 +12,15 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
-    // Check authentication
     const session = await getServerSession(req, res, authOptions);
     
-    if (!session) {
+    if (!session || !session.user) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    // ইউজার আইডি বের করা
-    const userId = session.user?.id || session.user?._id;
+    const userId = session.user.id;
     
     if (!userId) {
-      console.error('User ID not found in session:', session);
       return res.status(401).json({ message: 'User ID not found. Please login again.' });
     }
 
@@ -33,18 +30,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Product ID is required' });
     }
 
-    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Check stock
     if (product.stock < quantity) {
       return res.status(400).json({ message: 'Insufficient stock' });
     }
 
-    // Find or create cart
     let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
@@ -54,16 +48,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Check if item already exists in cart
     const existingItem = cart.items.find(
       (item) => item.product.toString() === productId
     );
 
     if (existingItem) {
-      // Update quantity
       existingItem.quantity += quantity;
     } else {
-      // Add new item
       cart.items.push({
         product: productId,
         quantity: quantity,
@@ -72,8 +63,6 @@ export default async function handler(req, res) {
     }
 
     await cart.save();
-
-    // Populate product details for response
     await cart.populate('items.product');
 
     res.status(200).json({
@@ -85,4 +74,4 @@ export default async function handler(req, res) {
     console.error('Cart add error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-    }
+}

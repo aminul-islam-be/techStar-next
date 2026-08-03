@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
+import { ObjectId } from 'mongodb';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -13,10 +14,10 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      // ডেমো পণ্যের জন্য API কল (পরে রিয়েল API যোগ করব)
+      // ডেমো পণ্য — MongoDB ObjectId ফরম্যাটে
       const demoProducts = [
         {
-          _id: '1',
+          _id: new ObjectId('507f1f77bcf86cd799439011'),
           name: 'Smart LED Bulb',
           category: 'Electronics',
           price: 12.99,
@@ -24,7 +25,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: '2',
+          _id: new ObjectId('507f1f77bcf86cd799439012'),
           name: 'Wireless Charger',
           category: 'Electronics',
           price: 24.99,
@@ -32,7 +33,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: '3',
+          _id: new ObjectId('507f1f77bcf86cd799439013'),
           name: 'HDMI Cable 2m',
           category: 'Components',
           price: 8.99,
@@ -40,7 +41,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: '4',
+          _id: new ObjectId('507f1f77bcf86cd799439014'),
           name: 'USB-C Hub 6-in-1',
           category: 'Electronics',
           price: 19.99,
@@ -48,7 +49,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: '5',
+          _id: new ObjectId('507f1f77bcf86cd799439015'),
           name: 'Smart Plug WiFi',
           category: 'Electrical',
           price: 15.99,
@@ -56,7 +57,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: '6',
+          _id: new ObjectId('507f1f77bcf86cd799439016'),
           name: 'Bluetooth Speaker',
           category: 'Electronics',
           price: 29.99,
@@ -267,4 +268,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-  }
+                        }

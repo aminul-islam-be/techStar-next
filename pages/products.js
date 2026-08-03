@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
-import { ObjectId } from 'mongodb';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -14,10 +13,10 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      // ডেমো পণ্য — MongoDB ObjectId ফরম্যাটে
+      // ডেমো পণ্য — সঠিক ObjectId ফরম্যাটে (24 character hex)
       const demoProducts = [
         {
-          _id: new ObjectId('507f1f77bcf86cd799439011'),
+          _id: '507f1f77bcf86cd799439011',
           name: 'Smart LED Bulb',
           category: 'Electronics',
           price: 12.99,
@@ -25,7 +24,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: new ObjectId('507f1f77bcf86cd799439012'),
+          _id: '507f1f77bcf86cd799439012',
           name: 'Wireless Charger',
           category: 'Electronics',
           price: 24.99,
@@ -33,7 +32,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: new ObjectId('507f1f77bcf86cd799439013'),
+          _id: '507f1f77bcf86cd799439013',
           name: 'HDMI Cable 2m',
           category: 'Components',
           price: 8.99,
@@ -41,7 +40,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: new ObjectId('507f1f77bcf86cd799439014'),
+          _id: '507f1f77bcf86cd799439014',
           name: 'USB-C Hub 6-in-1',
           category: 'Electronics',
           price: 19.99,
@@ -49,7 +48,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: new ObjectId('507f1f77bcf86cd799439015'),
+          _id: '507f1f77bcf86cd799439015',
           name: 'Smart Plug WiFi',
           category: 'Electrical',
           price: 15.99,
@@ -57,7 +56,7 @@ export default function ProductsPage() {
           images: [],
         },
         {
-          _id: new ObjectId('507f1f77bcf86cd799439016'),
+          _id: '507f1f77bcf86cd799439016',
           name: 'Bluetooth Speaker',
           category: 'Electronics',
           price: 29.99,
@@ -268,4 +267,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-                        }
+      }

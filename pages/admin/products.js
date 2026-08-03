@@ -19,7 +19,6 @@ export default function AdminProducts() {
     }
 
     if (status === 'authenticated') {
-      // চেক করুন admin কিনা
       if (session.user.role !== 'admin') {
         router.push('/');
         return;
@@ -303,4 +302,4 @@ export default function AdminProducts() {
       `}</style>
     </>
   );
-  }
+}

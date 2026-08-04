@@ -3,8 +3,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import Header from '../../components/Header';  // ✅ সঠিক
-import OrderStatusBadge from '../../components/OrderStatusBadge';  // ✅ সঠিক
+import Header from '../../components/Header';
+import OrderStatusBadge from '../../components/OrderStatusBadge';
 
 export default function AdminOrders() {
   const { data: session, status } = useSession();
@@ -61,6 +61,19 @@ export default function AdminOrders() {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Dhaka',
+    });
+  };
+
   if (status === 'loading' || loading) {
     return (
       <div>
@@ -96,7 +109,7 @@ export default function AdminOrders() {
                   <th>Total</th>
                   <th>Status</th>
                   <th>Payment</th>
-                  <th>Date</th>
+                  <th>Date & Time</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -104,7 +117,7 @@ export default function AdminOrders() {
                 {orders.map((order, index) => (
                   <tr key={order._id}>
                     <td>#{index + 1}</td>
-                    <td>{order.user?.name || 'Unknown'}</td>
+                    <td>{order.user?.name || order.shippingAddress?.fullName || 'Unknown'}</td>
                     <td>{order.totalItems}</td>
                     <td>${order.totalPrice.toFixed(2)}</td>
                     <td><OrderStatusBadge status={order.status} /></td>
@@ -113,7 +126,7 @@ export default function AdminOrders() {
                         {order.paymentStatus}
                       </span>
                     </td>
-                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td>{formatDate(order.createdAt)}</td>
                     <td className="actions">
                       <Link href={`/orders/${order._id}`} className="btnView">
                         👁️ View
@@ -249,4 +262,4 @@ export default function AdminOrders() {
       `}</style>
     </>
   );
-                            }
+          }

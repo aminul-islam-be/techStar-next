@@ -105,7 +105,11 @@ export default function ProductsPage() {
             {products.map((product) => (
               <div key={product._id} className="productCard">
                 <div className="productImage">
-                  <div className="noImage">📷</div>
+                  {product.images && product.images.length > 0 ? (
+                    <img src={product.images[0]} alt={product.name} className="productImg" />
+                  ) : (
+                    <div className="noImage">📷</div>
+                  )}
                 </div>
                 <h3>{product.name}</h3>
                 <p className="category">{product.category}</p>
@@ -196,8 +200,8 @@ export default function ProductsPage() {
 
         .productGrid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 24px;
         }
 
         .productCard {
@@ -216,35 +220,42 @@ export default function ProductsPage() {
 
         .productImage {
           width: 100%;
-          height: 140px;
+          height: 160px;
           background: #f0f2f5;
           border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 12px;
+          overflow: hidden;
+        }
+
+        .productImg {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .noImage {
-          font-size: 40px;
+          font-size: 48px;
           color: #ccc;
         }
 
         .productCard h3 {
           margin: 0 0 4px 0;
-          font-size: 0.95rem;
+          font-size: 1rem;
           color: #333;
-          min-height: 44px;
+          min-height: 48px;
         }
 
         .category {
           margin: 0 0 8px 0;
-          font-size: 0.8rem;
+          font-size: 0.85rem;
           color: #999;
         }
 
         .price {
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           font-weight: 700;
           color: #667eea;
           margin: 0 0 12px 0;
@@ -272,6 +283,24 @@ export default function ProductsPage() {
         }
 
         @media (max-width: 600px) {
+          .productGrid {
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+          }
+
+          .productCard {
+            padding: 12px;
+          }
+
+          .productImage {
+            height: 120px;
+          }
+
+          .productCard h3 {
+            font-size: 0.9rem;
+            min-height: 40px;
+          }
+
           .headerRow {
             flex-direction: column;
             align-items: stretch;
@@ -281,14 +310,16 @@ export default function ProductsPage() {
             width: 100%;
             text-align: center;
           }
+        }
 
+        @media (max-width: 400px) {
           .productGrid {
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
           }
 
           .productCard {
-            padding: 12px;
+            padding: 8px;
           }
 
           .productImage {
@@ -296,11 +327,20 @@ export default function ProductsPage() {
           }
 
           .productCard h3 {
-            font-size: 0.85rem;
-            min-height: 38px;
+            font-size: 0.8rem;
+            min-height: 36px;
+          }
+
+          .price {
+            font-size: 1rem;
+          }
+
+          .addBtn {
+            font-size: 12px;
+            padding: 8px;
           }
         }
       `}</style>
     </>
   );
-          }
+    }

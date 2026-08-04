@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import Header from '../../components/Header';
+import Header from '/../../../components/Header';
 import OrderStatusBadge from '../../components/OrderStatusBadge';
 
 export default function AdminOrders() {

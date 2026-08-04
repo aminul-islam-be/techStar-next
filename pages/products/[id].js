@@ -77,7 +77,6 @@ export default function ProductDetails() {
 
     setBuying(true);
     try {
-      // প্রথমে কার্টে যোগ করুন
       const res = await fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -153,6 +152,7 @@ export default function ProductDetails() {
               </span>
             </div>
 
+            {/* ✅ ২টি বাটন এক লাইনে */}
             <div className="buttonGroup">
               <button
                 onClick={addToCart}
@@ -312,6 +312,7 @@ export default function ProductDetails() {
           font-weight: 600;
         }
 
+        /* ✅ ২টি বাটন এক লাইনে */
         .buttonGroup {
           display: flex;
           gap: 16px;
@@ -329,7 +330,7 @@ export default function ProductDetails() {
           cursor: pointer;
           transition: all 0.3s;
           text-align: center;
-          min-width: 160px;
+          min-width: 140px;
         }
 
         .btn-cart {
@@ -382,6 +383,19 @@ export default function ProductDetails() {
           }
 
           .buttonGroup {
+            flex-direction: row;
+          }
+
+          .btn {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            min-width: 100px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .buttonGroup {
             flex-direction: column;
           }
 
@@ -392,4 +406,4 @@ export default function ProductDetails() {
       `}</style>
     </>
   );
-        }
+  }

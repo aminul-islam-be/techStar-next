@@ -42,17 +42,23 @@ export default function AdminDashboard() {
             <div className="adminCard">
               <h3>🛒 Products</h3>
               <p>Manage your products</p>
-              <Link href="/admin/products" className="btn btn-primary">View Products</Link>
+              <Link href="/admin/products" className="btn btn-primary">
+                View Products
+              </Link>
             </div>
             <div className="adminCard">
               <h3>👥 Users</h3>
               <p>Manage users and vendors</p>
-              <Link href="/admin/users" className="btn btn-primary">View Users</Link>
+              <Link href="/admin/users" className="btn btn-primary">
+                View Users
+              </Link>
             </div>
             <div className="adminCard">
               <h3>📦 Orders</h3>
               <p>View and manage orders</p>
-              <Link href="/admin/orders" className="btn btn-primary">View Orders</Link>
+              <Link href="/admin/orders" className="btn btn-primary">
+                View Orders
+              </Link>
             </div>
           </div>
         </div>
@@ -161,4 +167,4 @@ export default function AdminDashboard() {
       `}</style>
     </>
   );
-}
+    }

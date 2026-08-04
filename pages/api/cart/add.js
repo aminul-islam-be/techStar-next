@@ -3,7 +3,7 @@ import Cart from '../../../models/Cart';
 import Product from '../../../models/Product';
 import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../../../lib/authOptions';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    // ইউজার ইমেইল দিয়ে MongoDB থেকে ইউজার খুঁজি
+    // ইউজার ইমেইল দিয়ে MongoDB থেকে ইউজার খুঁজি
     const userEmail = session.user.email;
     if (!userEmail) {
       return res.status(401).json({ message: 'User email not found' });

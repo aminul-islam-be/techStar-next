@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import Header from '../components/Header';
 
 export default function ProductsPage() {
@@ -104,12 +105,15 @@ export default function ProductsPage() {
           <div className="productGrid">
             {products.map((product) => (
               <div key={product._id} className="productCard">
+                {/* ✅ ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
                 <div className="productImage">
-                  {product.images && product.images.length > 0 ? (
-                    <img src={product.images[0]} alt={product.name} className="productImg" />
-                  ) : (
-                    <div className="noImage">📷</div>
-                  )}
+                  <Link href={`/products/${product._id}`}>
+                    {product.images && product.images.length > 0 ? (
+                      <img src={product.images[0]} alt={product.name} className="productImg" />
+                    ) : (
+                      <div className="noImage">📷</div>
+                    )}
+                  </Link>
                 </div>
                 <div className="productInfo">
                   <h3>{product.name}</h3>
@@ -232,6 +236,20 @@ export default function ProductsPage() {
           position: relative;
           border: 1px solid #eee;
           margin-bottom: 10px;
+          cursor: pointer;
+          transition: opacity 0.3s;
+        }
+
+        .productImage:hover {
+          opacity: 0.85;
+        }
+
+        .productImage a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
         }
 
         .productImg {
@@ -371,4 +389,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-}
+          }

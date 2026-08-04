@@ -63,31 +63,42 @@ export default function AddProduct() {
         );
 
         const data = await res.json();
+        console.log('Cloudinary response:', data);
+
         if (data.secure_url) {
           uploadedUrls.push(data.secure_url);
+        } else {
+          console.error('Upload failed:', data);
+          setError('Image upload failed: ' + (data.error?.message || 'Unknown error'));
         }
       }
 
-      setImageUrls((prev) => [...prev, ...uploadedUrls]);
-      setImagePreview((prev) => [...prev, ...uploadedUrls]);
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...uploadedUrls],
-      }));
+      if (uploadedUrls.length > 0) {
+        setImageUrls(uploadedUrls);
+        setImagePreview(uploadedUrls);
+        setFormData((prev) => ({
+          ...prev,
+          images: uploadedUrls,
+        }));
+        console.log('Uploaded URLs:', uploadedUrls);
+      } else {
+        setError('No images were uploaded successfully');
+      }
     } catch (error) {
       console.error('Upload error:', error);
-      setError('Failed to upload images');
+      setError('Failed to upload images: ' + error.message);
     } finally {
       setUploading(false);
     }
   };
 
   const removeImage = (index) => {
-    setImagePreview((prev) => prev.filter((_, i) => i !== index));
-    setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    const newUrls = imageUrls.filter((_, i) => i !== index);
+    setImageUrls(newUrls);
+    setImagePreview(newUrls);
     setFormData((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index),
+      images: newUrls,
     }));
   };
 
@@ -97,15 +108,21 @@ export default function AddProduct() {
     setLoading(true);
 
     try {
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        category: formData.category,
+        images: formData.images,
+      };
+
+      console.log('Submitting product data:', productData);
+
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          stock: parseInt(formData.stock),
-          images: formData.images,
-        }),
+        body: JSON.stringify(productData),
       });
 
       const data = await res.json();
@@ -117,7 +134,8 @@ export default function AddProduct() {
         setError(data.message || 'Failed to create product');
       }
     } catch (error) {
-      setError('Something went wrong');
+      console.error('Submit error:', error);
+      setError('Something went wrong: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -209,7 +227,7 @@ export default function AddProduct() {
             </select>
           </div>
 
-          {/* ✅ Image Upload Section */}
+          {/* Image Upload Section */}
           <div className="formGroup">
             <label>Upload Product Images</label>
             <div className="imageUploadWrapper">
@@ -361,7 +379,7 @@ export default function AddProduct() {
           gap: 16px;
         }
 
-        /* ===== Image Upload Styles ===== */
+        /* Image Upload Styles */
         .imageUploadWrapper {
           display: flex;
           flex-direction: column;
@@ -470,4 +488,4 @@ export default function AddProduct() {
       `}</style>
     </>
   );
-        }
+                }

@@ -94,12 +94,17 @@ export default function CartPage() {
       </Head>
       <Header />
       <div className="container">
-        <h1>🛒 Your Cart</h1>
+        <div className="cartHeader">
+          <Link href="/products" className="backToProducts">
+            ← Browse Products
+          </Link>
+          <h1>🛒 Your Cart</h1>
+        </div>
 
         {cart.items && cart.items.length === 0 ? (
           <div className="emptyCart">
             <p>Your cart is empty</p>
-            <Link href="/products" className="btn btn-primary">
+            <Link href="/products" className="btn-empty">
               Browse Products
             </Link>
           </div>
@@ -147,16 +152,17 @@ export default function CartPage() {
 
             <div className="cartSummary">
               <div className="summaryRow">
-                <span>Total Items:</span>
-                <span>{cart.totalItems}</span>
+                <span>📦 Total Items:</span>
+                <span className="value">{cart.totalItems}</span>
               </div>
               <div className="summaryRow total">
-                <span>Total Price:</span>
-                <span>${cart.totalPrice.toFixed(2)}</span>
+                <span>💰 Total Price:</span>
+                <span className="value">${cart.totalPrice.toFixed(2)}</span>
               </div>
-              <button className="btn btn-primary checkoutBtn">
-                Proceed to Checkout
-              </button>
+              {/* ✅ Checkout লিংক ঠিক করা হলো */}
+              <Link href="/checkout" className="btn btn-primary checkoutBtn">
+                🛒 Proceed to Checkout →
+              </Link>
             </div>
           </>
         )}
@@ -169,10 +175,35 @@ export default function CartPage() {
           padding: 20px 16px;
         }
 
+        .cartHeader {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+
+        .backToProducts {
+          color: #667eea;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 500;
+          padding: 6px 14px;
+          border-radius: 6px;
+          transition: all 0.3s;
+          border: 1px solid #667eea;
+          background: transparent;
+        }
+
+        .backToProducts:hover {
+          background: #667eea;
+          color: white;
+        }
+
         h1 {
           font-size: 2rem;
           color: #333;
-          margin-bottom: 20px;
+          margin: 0;
         }
 
         .loading {
@@ -201,6 +232,24 @@ export default function CartPage() {
           font-size: 1.2rem;
           color: #666;
           margin-bottom: 20px;
+        }
+
+        .btn-empty {
+          display: inline-block;
+          padding: 12px 30px;
+          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+          color: white;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: 600;
+          transition: transform 0.2s, box-shadow 0.3s;
+          border: none;
+          cursor: pointer;
+        }
+
+        .btn-empty:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
         }
 
         .cartItems {
@@ -327,6 +376,11 @@ export default function CartPage() {
           color: #555;
         }
 
+        .summaryRow .value {
+          font-weight: 700;
+          color: #333;
+        }
+
         .summaryRow.total {
           font-size: 1.2rem;
           font-weight: 700;
@@ -336,36 +390,56 @@ export default function CartPage() {
           margin-top: 4px;
         }
 
+        .summaryRow.total .value {
+          color: #28a745;
+          font-size: 1.4rem;
+        }
+
         .checkoutBtn {
           width: 100%;
-          margin-top: 16px;
-          padding: 14px;
-          font-size: 1.1rem;
-        }
-
-        .btn {
-          display: inline-block;
-          padding: 10px 24px;
-          background: #667eea;
+          margin-top: 20px;
+          padding: 16px 24px;
+          font-size: 1.2rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
           color: white;
-          text-decoration: none;
           border: none;
-          border-radius: 8px;
-          font-weight: 600;
+          border-radius: 12px;
           cursor: pointer;
-          transition: background 0.3s, transform 0.2s;
+          transition: all 0.3s ease;
           text-align: center;
+          letter-spacing: 0.5px;
+          box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+          display: inline-block;
+          text-decoration: none;
         }
 
-        .btn-primary {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .checkoutBtn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
         }
 
-        .btn-primary:hover {
-          transform: translateY(-2px);
+        .checkoutBtn:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 10px rgba(40, 167, 69, 0.2);
         }
 
         @media (max-width: 600px) {
+          .cartHeader {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+
+          .backToProducts {
+            font-size: 13px;
+            padding: 4px 10px;
+          }
+
+          h1 {
+            font-size: 1.5rem;
+          }
+
           .cartItem {
             flex-direction: column;
             align-items: stretch;
@@ -386,4 +460,4 @@ export default function CartPage() {
       `}</style>
     </>
   );
-      }
+                    }

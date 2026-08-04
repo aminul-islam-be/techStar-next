@@ -106,15 +106,15 @@ export default function ProductsPage() {
             {products.map((product) => (
               <div key={product._id} className="productCard">
                 {/* ✅ ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
-                <div className="productImage">
-                  <Link href={`/products/${product._id}`}>
+                <Link href={`/products/${product._id}`} className="productImageLink">
+                  <div className="productImage">
                     {product.images && product.images.length > 0 ? (
                       <img src={product.images[0]} alt={product.name} className="productImg" />
                     ) : (
                       <div className="noImage">📷</div>
                     )}
-                  </Link>
-                </div>
+                  </div>
+                </Link>
                 <div className="productInfo">
                   <h3>{product.name}</h3>
                   <p className="category">{product.category}</p>
@@ -224,6 +224,16 @@ export default function ProductsPage() {
           box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
+        .productImageLink {
+          display: block;
+          cursor: pointer;
+          transition: opacity 0.3s;
+        }
+
+        .productImageLink:hover {
+          opacity: 0.85;
+        }
+
         .productImage {
           width: 100%;
           height: 200px;
@@ -236,20 +246,6 @@ export default function ProductsPage() {
           position: relative;
           border: 1px solid #eee;
           margin-bottom: 10px;
-          cursor: pointer;
-          transition: opacity 0.3s;
-        }
-
-        .productImage:hover {
-          opacity: 0.85;
-        }
-
-        .productImage a {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
         }
 
         .productImg {
@@ -389,4 +385,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-          }
+    }

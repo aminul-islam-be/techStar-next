@@ -3,7 +3,7 @@ import Cart from '../../../models/Cart';
 import Product from '../../../models/Product';
 import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../../../lib/authOptions';
 
 export default async function handler(req, res) {
   if (req.method !== 'PUT') {

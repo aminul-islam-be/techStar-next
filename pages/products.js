@@ -106,25 +106,23 @@ export default function ProductsPage() {
               <div key={product._id} className="productCard">
                 <div className="productImage">
                   {product.images && product.images.length > 0 ? (
-                    <img 
-                      src={product.images[0]} 
-                      alt={product.name} 
-                      className="productImg" 
-                    />
+                    <img src={product.images[0]} alt={product.name} className="productImg" />
                   ) : (
                     <div className="noImage">📷</div>
                   )}
                 </div>
-                <h3>{product.name}</h3>
-                <p className="category">{product.category}</p>
-                <p className="price">${product.price.toFixed(2)}</p>
-                <button
-                  onClick={() => addToCart(product._id)}
-                  disabled={adding[product._id] || product.stock === 0}
-                  className="addBtn"
-                >
-                  {adding[product._id] ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart 🛒'}
-                </button>
+                <div className="productInfo">
+                  <h3>{product.name}</h3>
+                  <p className="category">{product.category}</p>
+                  <p className="price">${product.price.toFixed(2)}</p>
+                  <button
+                    onClick={() => addToCart(product._id)}
+                    disabled={adding[product._id] || product.stock === 0}
+                    className="addBtn"
+                  >
+                    {adding[product._id] ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart 🛒'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -230,17 +228,17 @@ export default function ProductsPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 12px;
           overflow: hidden;
           position: relative;
           border: 1px solid #eee;
+          margin-bottom: 10px;
         }
 
         .productImg {
           width: 100%;
           height: 100%;
           object-fit: contain;
-          padding: 8px;
+          padding: 4px;
           background: white;
         }
 
@@ -249,24 +247,32 @@ export default function ProductsPage() {
           color: #ccc;
         }
 
-        .productCard h3 {
-          margin: 0 0 4px 0;
+        .productInfo {
+          padding: 0 4px;
+        }
+
+        .productInfo h3 {
+          margin: 0 0 2px 0;
           font-size: 1rem;
           color: #333;
-          min-height: 48px;
+          font-weight: 600;
+          line-height: 1.3;
+          min-height: 40px;
         }
 
         .category {
-          margin: 0 0 8px 0;
-          font-size: 0.85rem;
+          margin: 0 0 6px 0;
+          font-size: 0.8rem;
           color: #999;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .price {
           font-size: 1.2rem;
           font-weight: 700;
           color: #667eea;
-          margin: 0 0 12px 0;
+          margin: 0 0 10px 0;
         }
 
         .addBtn {
@@ -279,6 +285,7 @@ export default function ProductsPage() {
           font-weight: 600;
           cursor: pointer;
           transition: opacity 0.3s;
+          font-size: 14px;
         }
 
         .addBtn:hover:not(:disabled) {
@@ -304,9 +311,22 @@ export default function ProductsPage() {
             height: 140px;
           }
 
-          .productCard h3 {
-            font-size: 0.9rem;
-            min-height: 40px;
+          .productInfo h3 {
+            font-size: 0.85rem;
+            min-height: 34px;
+          }
+
+          .category {
+            font-size: 0.7rem;
+          }
+
+          .price {
+            font-size: 1rem;
+          }
+
+          .addBtn {
+            font-size: 12px;
+            padding: 8px;
           }
 
           .headerRow {
@@ -334,21 +354,21 @@ export default function ProductsPage() {
             height: 100px;
           }
 
-          .productCard h3 {
-            font-size: 0.8rem;
-            min-height: 36px;
+          .productInfo h3 {
+            font-size: 0.75rem;
+            min-height: 30px;
           }
 
           .price {
-            font-size: 1rem;
+            font-size: 0.9rem;
           }
 
           .addBtn {
-            font-size: 12px;
-            padding: 8px;
+            font-size: 11px;
+            padding: 6px;
           }
         }
       `}</style>
     </>
   );
-          }
+}

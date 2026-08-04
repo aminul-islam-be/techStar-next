@@ -3,8 +3,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import Header from '/../../../components/Header';
-import OrderStatusBadge from '../../components/OrderStatusBadge';
+import Header from '../../components/Header';  // ✅ সঠিক
+import OrderStatusBadge from '../../components/OrderStatusBadge';  // ✅ সঠিক
 
 export default function AdminOrders() {
   const { data: session, status } = useSession();
@@ -249,4 +249,4 @@ export default function AdminOrders() {
       `}</style>
     </>
   );
-    }
+                            }

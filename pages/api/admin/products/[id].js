@@ -1,7 +1,7 @@
 import dbConnect from '../../../../lib/db';
 import Product from '../../../../models/Product';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]';
+import { authOptions } from '../../../../lib/authOptions';
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -71,4 +71,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-    }
+}

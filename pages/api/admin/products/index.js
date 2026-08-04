@@ -1,7 +1,7 @@
 import dbConnect from '../../../../lib/db';
 import Product from '../../../../models/Product';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]';
+import { authOptions } from '../../../../lib/authOptions';
 
 export default async function handler(req, res) {
   await dbConnect();

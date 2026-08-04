@@ -2,7 +2,7 @@ import dbConnect from '../../../lib/db';
 import Cart from '../../../models/Cart';
 import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../../../lib/authOptions';
 
 export default async function handler(req, res) {
   if (req.method !== 'DELETE') {

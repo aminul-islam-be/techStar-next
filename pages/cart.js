@@ -28,7 +28,12 @@ export default function CartPage() {
       const res = await fetch('/api/cart/get');
       const data = await res.json();
       if (data.success) {
-        setCart(data.cart);
+        // ✅ Safety Check: product null/undefined হলে ফিল্টার করুন
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
       }
     } catch (error) {
       console.error('Error fetching cart:', error);
@@ -49,7 +54,11 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setCart(data.cart);
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
       }
     } catch (error) {
       console.error('Error updating cart:', error);
@@ -69,7 +78,11 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setCart(data.cart);
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
       }
     } catch (error) {
       console.error('Error removing item:', error);
@@ -111,43 +124,52 @@ export default function CartPage() {
         ) : (
           <>
             <div className="cartItems">
-              {/* ✅ Safety Check: product null/undefined হলে স্কিপ করবে */}
               {cart.items
                 .filter((item) => item.product)
                 .map((item) => (
                   <div key={item.product._id} className="cartItem">
-                    <div className="itemInfo">
-                      <h3>{item.product.name}</h3>
-                      <p className="price">${item.product.price.toFixed(2)}</p>
+                    <div className="itemImageWrapper">
+                      {item.product.images && item.product.images.length > 0 ? (
+                        <img src={item.product.images[0]} alt={item.product.name} className="itemImage" />
+                      ) : (
+                        <div className="itemNoImage">📷</div>
+                      )}
                     </div>
 
-                    <div className="itemControls">
-                      <button
-                        onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
-                        disabled={updating || item.quantity <= 1}
-                        className="qtyBtn"
-                      >
-                        −
-                      </button>
-                      <span className="qty">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                        disabled={updating}
-                        className="qtyBtn"
-                      >
-                        +
-                      </button>
-                    </div>
+                    <div className="itemDetails">
+                      <div className="itemInfo">
+                        <h3>{item.product.name}</h3>
+                        <p className="price">${item.product.price.toFixed(2)}</p>
+                      </div>
 
-                    <div className="itemTotal">
-                      <p>${(item.product.price * item.quantity).toFixed(2)}</p>
-                      <button
-                        onClick={() => removeItem(item.product._id)}
-                        disabled={updating}
-                        className="removeBtn"
-                      >
-                        ✕
-                      </button>
+                      <div className="itemControls">
+                        <button
+                          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                          disabled={updating || item.quantity <= 1}
+                          className="qtyBtn"
+                        >
+                          −
+                        </button>
+                        <span className="qty">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                          disabled={updating}
+                          className="qtyBtn"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <div className="itemTotal">
+                        <p>${(item.product.price * item.quantity).toFixed(2)}</p>
+                        <button
+                          onClick={() => removeItem(item.product._id)}
+                          disabled={updating}
+                          className="removeBtn"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -156,7 +178,7 @@ export default function CartPage() {
             <div className="cartSummary">
               <div className="summaryRow">
                 <span>📦 Total Items:</span>
-                <span className="value">{cart.totalItems}</span>
+                <span className="value">{cart.items.filter((item) => item.product).length}</span>
               </div>
               <div className="summaryRow total">
                 <span>💰 Total Price:</span>
@@ -264,15 +286,49 @@ export default function CartPage() {
         .cartItem {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          gap: 16px;
           padding: 16px 20px;
           border-bottom: 1px solid #f0f0f0;
           flex-wrap: wrap;
-          gap: 12px;
         }
 
         .cartItem:last-child {
           border-bottom: none;
+        }
+
+        .itemImageWrapper {
+          width: 80px;
+          height: 80px;
+          background: #f8f9fa;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          flex-shrink: 0;
+          border: 1px solid #eee;
+        }
+
+        .itemImage {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 4px;
+          background: white;
+        }
+
+        .itemNoImage {
+          font-size: 30px;
+          color: #ccc;
+        }
+
+        .itemDetails {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         .itemInfo {
@@ -447,6 +503,17 @@ export default function CartPage() {
             align-items: stretch;
           }
 
+          .itemImageWrapper {
+            width: 100%;
+            height: 150px;
+          }
+
+          .itemDetails {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+          }
+
           .itemInfo {
             text-align: center;
           }
@@ -462,4 +529,4 @@ export default function CartPage() {
       `}</style>
     </>
   );
-                          }
+          }

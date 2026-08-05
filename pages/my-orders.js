@@ -11,6 +11,8 @@ export default function MyOrders() {
   const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -73,6 +75,66 @@ export default function MyOrders() {
     return { text: '', className: '' };
   };
 
+  // ✅ Delete Order (শুধু My Orders থেকে সরাবে)
+  const handleDelete = async (orderId) => {
+    if (!confirm('Are you sure you want to delete this order from your list?')) return;
+    
+    setProcessing(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOrders(orders.filter(o => o._id !== orderId));
+        alert('✅ Order deleted from your list!');
+      } else {
+        alert(data.message || 'Failed to delete order');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setProcessing(false);
+      setMenuOpen(null);
+    }
+  };
+
+  // ✅ Cancel Order (Admin-এ Cancelled দেখাবে)
+  const handleCancel = async (orderId) => {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+    
+    setProcessing(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // অর্ডার লিস্ট আপডেট করুন
+        setOrders(orders.map(o => 
+          o._id === orderId ? { ...o, status: 'cancelled' } : o
+        ));
+        alert('✅ Order cancelled successfully!');
+        // Admin Panel-এ Cancelled দেখাবে
+      } else {
+        alert(data.message || 'Failed to cancel order');
+      }
+    } catch (error) {
+      console.error('Cancel error:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setProcessing(false);
+      setMenuOpen(null);
+    }
+  };
+
+  const toggleMenu = (orderId) => {
+    setMenuOpen(menuOpen === orderId ? null : orderId);
+  };
+
   if (status === 'loading' || loading) {
     return (
       <div>
@@ -103,10 +165,40 @@ export default function MyOrders() {
             {orders.map((order) => {
               const paymentDisplay = getPaymentStatusDisplay(order);
               return (
-                <Link href={`/orders/${order._id}`} key={order._id} className="orderCard">
+                <div key={order._id} className="orderCard">
                   <div className="orderHeader">
                     <span className="orderId">Order #{order._id.slice(-6)}</span>
-                    <OrderStatusBadge status={order.status} />
+                    <div className="headerRight">
+                      <OrderStatusBadge status={order.status} />
+                      {/* ✅ ৩টি ডট মেনু */}
+                      <div className="menuWrapper">
+                        <button 
+                          className="menuBtn" 
+                          onClick={() => toggleMenu(order._id)}
+                          disabled={processing}
+                        >
+                          ⋮
+                        </button>
+                        {menuOpen === order._id && (
+                          <div className="menuDropdown">
+                            <button 
+                              onClick={() => handleDelete(order._id)}
+                              className="menuItem delete"
+                              disabled={processing}
+                            >
+                              🗑️ Delete
+                            </button>
+                            <button 
+                              onClick={() => handleCancel(order._id)}
+                              className="menuItem cancel"
+                              disabled={processing || order.status === 'cancelled'}
+                            >
+                              ✖️ Cancel Order
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="orderDetails">
@@ -126,11 +218,10 @@ export default function MyOrders() {
                     </div>
                   </div>
 
-                  {/* ✅ Payment Status Display */}
                   <div className={`orderPaymentStatus ${paymentDisplay.className}`}>
                     {paymentDisplay.text}
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>
@@ -201,9 +292,8 @@ export default function MyOrders() {
           padding: 20px 24px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
           transition: transform 0.3s, box-shadow 0.3s;
-          text-decoration: none;
-          color: inherit;
           border: 1px solid #f0f0f0;
+          position: relative;
         }
 
         .orderCard:hover {
@@ -221,10 +311,92 @@ export default function MyOrders() {
           gap: 8px;
         }
 
+        .headerRight {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
         .orderId {
           font-weight: 700;
           color: #333;
           font-size: 1.1rem;
+        }
+
+        /* ✅ ৩টি ডট মেনু */
+        .menuWrapper {
+          position: relative;
+        }
+
+        .menuBtn {
+          background: none;
+          border: none;
+          font-size: 1.3rem;
+          cursor: pointer;
+          padding: 0 6px;
+          color: #666;
+          transition: color 0.3s;
+          line-height: 1;
+        }
+
+        .menuBtn:hover {
+          color: #333;
+        }
+
+        .menuBtn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .menuDropdown {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+          min-width: 160px;
+          z-index: 50;
+          overflow: hidden;
+          border: 1px solid #f0f0f0;
+        }
+
+        .menuItem {
+          display: block;
+          width: 100%;
+          padding: 10px 16px;
+          border: none;
+          background: none;
+          text-align: left;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background 0.2s;
+          color: #333;
+        }
+
+        .menuItem:hover {
+          background: #f8f9fa;
+        }
+
+        .menuItem.delete {
+          color: #dc3545;
+        }
+
+        .menuItem.delete:hover {
+          background: #fee;
+        }
+
+        .menuItem.cancel {
+          color: #e74c3c;
+        }
+
+        .menuItem.cancel:hover {
+          background: #fde8e8;
+        }
+
+        .menuItem:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
         }
 
         .orderDetails {
@@ -274,7 +446,6 @@ export default function MyOrders() {
           color: #999;
         }
 
-        /* ✅ Payment Status Styles */
         .orderPaymentStatus {
           margin-top: 10px;
           padding-top: 10px;
@@ -325,8 +496,13 @@ export default function MyOrders() {
           .orderPaymentStatus {
             font-size: 0.85rem;
           }
+
+          .menuDropdown {
+            right: -10px;
+            min-width: 140px;
+          }
         }
       `}</style>
     </>
   );
-}
+    }

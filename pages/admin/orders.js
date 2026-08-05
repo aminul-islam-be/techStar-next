@@ -42,7 +42,6 @@ export default function AdminOrders() {
     }
   };
 
-  // ✅ DELETE: অর্ডার ডিলিট (Order History তে যাবে)
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this order?')) return;
     setDeleting(id);
@@ -65,7 +64,6 @@ export default function AdminOrders() {
     }
   };
 
-  // ✅ Payment Status আপডেট ফাংশন
   const updatePaymentStatus = async (orderId, newStatus) => {
     if (!confirm(`Change payment status to ${newStatus}?`)) return;
 
@@ -122,6 +120,9 @@ export default function AdminOrders() {
       <div className="container">
         <div className="headerRow">
           <h1>📦 Manage Orders</h1>
+          <Link href="/admin/order-history" className="historyLink">
+            🗄️ Order History
+          </Link>
         </div>
 
         {orders.length === 0 ? (
@@ -202,6 +203,19 @@ export default function AdminOrders() {
           margin: 0;
           font-size: 2rem;
           color: #333;
+        }
+        .historyLink {
+          color: #667eea;
+          text-decoration: none;
+          font-weight: 600;
+          padding: 8px 16px;
+          border: 1px solid #667eea;
+          border-radius: 8px;
+          transition: all 0.3s;
+        }
+        .historyLink:hover {
+          background: #667eea;
+          color: white;
         }
         .loading {
           display: flex;
@@ -312,4 +326,4 @@ export default function AdminOrders() {
       `}</style>
     </>
   );
-    }
+          }

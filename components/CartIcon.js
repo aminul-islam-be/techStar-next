@@ -26,21 +26,35 @@ export default function CartIcon() {
 
   return (
     <Link href="/cart" className="cartIcon">
-      🛒
+      🛒 <span className="cartText">My Cart</span>
       {itemCount > 0 && <span className="badge">{itemCount}</span>}
       <style jsx>{`
         .cartIcon {
           position: relative;
-          font-size: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 1rem;
           text-decoration: none;
           color: #333;
           padding: 4px 8px;
+          border-radius: 6px;
+          transition: background 0.3s;
+        }
+
+        .cartIcon:hover {
+          background: #f0f0f0;
+        }
+
+        .cartText {
+          font-size: 14px;
+          font-weight: 500;
         }
 
         .badge {
           position: absolute;
-          top: -8px;
-          right: -8px;
+          top: -6px;
+          right: -6px;
           background: #e74c3c;
           color: white;
           font-size: 11px;

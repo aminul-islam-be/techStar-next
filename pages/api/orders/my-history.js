@@ -8,39 +8,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  await dbConnect();
+
+  const session = await getServerSession(req, res, authOptions);
+  if (!session || !session.user) {
+    return res.status(401).json({ message: 'Please login first' });
+  }
+
   try {
-    await dbConnect();
-
-    const session = await getServerSession(req, res, authOptions);
-    if (!session || !session.user) {
-      return res.status(401).json({ message: 'Please login first' });
-    }
-
-    // ✅ Customer এর deleted অর্ডার খুঁজুন (deletedBy: 'customer')
     const orders = await Order.find({
       user: session.user.id,
       isDeleted: true,
-      deletedBy: 'customer',
-    })
-      .populate('user', 'name email')
-      .sort({ deletedAt: -1 });
-
-    // ✅ 30 দিনের বেশি পুরনো অর্ডার ফিল্টার করুন
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const activeHistory = orders.filter(order => {
-      if (!order.autoDeleteAt) return true;
-      return new Date(order.autoDeleteAt) > new Date();
-    });
+    }).sort({ deletedAt: -1 });
 
     res.status(200).json({
       success: true,
-      count: activeHistory.length,
-      orders: activeHistory,
+      count: orders.length,
+      orders,
     });
   } catch (error) {
-    console.error('My history error:', error);
     res.status(500).json({ message: error.message });
   }
-      }
+}

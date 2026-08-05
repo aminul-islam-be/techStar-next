@@ -230,13 +230,13 @@ export default function Checkout() {
                 onChange={handleChange}
               >
                 <option value="cash">Cash on Delivery</option>
-                <option value="bkash">bKash (Send to 017XXXXXXXX)</option>
-                <option value="nagad">Nagad (Send to 017XXXXXXXX)</option>
-                <option value="rocket">Rocket (Send to 017XXXXXXXX)</option>
+                <option value="bkash">bKash (Send to 01922964696)</option>
+                <option value="nagad">Nagad (Send to 01922964696)</option>
+                <option value="rocket">Rocket (Send to 01922964696)</option>
               </select>
               {formData.paymentMethod !== 'cash' && (
                 <small className="hint">
-                  📱 Please send payment to <strong>017XXXXXXXX</strong>.
+                  📱 Please send payment to <strong>01922964696</strong>.
                   After payment, we will verify and confirm your order.
                 </small>
               )}

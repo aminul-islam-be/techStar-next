@@ -42,15 +42,18 @@ export default function AdminOrders() {
     }
   };
 
+  // ✅ DELETE: অর্ডার ডিলিট (Order History তে যাবে)
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this order?')) return;
     setDeleting(id);
     try {
-      const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/orders/${id}`, {
+        method: 'DELETE',
+      });
       const data = await res.json();
       if (data.success) {
         setOrders(orders.filter(o => o._id !== id));
-        alert('✅ Order deleted successfully!');
+        alert('✅ Order moved to Order History!');
       } else {
         alert(data.message || 'Failed to delete order');
       }
@@ -149,7 +152,6 @@ export default function AdminOrders() {
                     <td>${order.totalPrice.toFixed(2)}</td>
                     <td><OrderStatusBadge status={order.status} /></td>
                     <td>
-                      {/* ✅ Payment Status Dropdown */}
                       <select
                         value={order.paymentStatus || 'pending'}
                         onChange={(e) => updatePaymentStatus(order._id, e.target.value)}
@@ -310,4 +312,4 @@ export default function AdminOrders() {
       `}</style>
     </>
   );
-  }
+    }

@@ -74,6 +74,11 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Order not found' });
       }
 
+      // 🔍 ডিবাগ লগ
+      console.log('Delete request - isAdmin:', isAdmin);
+      console.log('Delete request - userId:', session.user.id);
+      console.log('Delete request - order userId:', order.user._id.toString());
+
       // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
       if (!isAdmin && order.user._id.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
@@ -95,6 +100,8 @@ export default async function handler(req, res) {
       }
 
       await order.save();
+
+      console.log('Order deleted by:', order.deletedBy); // ডিবাগ লগ
 
       res.status(200).json({
         success: true,
@@ -149,4 +156,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-          }
+}

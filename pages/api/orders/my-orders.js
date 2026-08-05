@@ -16,11 +16,12 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    const userId = session.user.id;
-
-    const orders = await Order.find({ user: userId })
-      .sort({ createdAt: -1 })
-      .limit(50);
+    // ✅ শুধু active অর্ডার দেখাবে (যেগুলো deleted নয়)
+    const orders = await Order.find({
+      user: session.user.id,
+      isDeleted: false,  // ← এই লাইনটি যোগ করুন
+    })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
       orders,
     });
   } catch (error) {
-    console.error('My orders fetch error:', error);
-    res.status(500).json({ message: error.message || 'Something went wrong' });
+    console.error('My orders error:', error);
+    res.status(500).json({ message: error.message });
   }
 }

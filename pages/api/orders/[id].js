@@ -79,6 +79,11 @@ export default async function handler(req, res) {
         return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
       }
 
+      // ✅ অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
+      if (order.isDeleted) {
+        return res.status(400).json({ message: 'Order already deleted' });
+      }
+
       // ✅ ডিলিটের ধরন সেট করুন
       order.isDeleted = true;
       order.deletedBy = isAdmin ? 'admin' : 'customer';
@@ -115,8 +120,14 @@ export default async function handler(req, res) {
         return res.status(403).json({ message: 'Access denied. You can only cancel your own orders.' });
       }
 
+      // ✅ অর্ডার ইতিমধ্যে ক্যান্সেল হয়েছে কিনা চেক করুন
       if (order.status === 'cancelled') {
         return res.status(400).json({ message: 'Order already cancelled' });
+      }
+
+      // ✅ অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
+      if (order.isDeleted) {
+        return res.status(400).json({ message: 'Cannot cancel a deleted order' });
       }
 
       order.status = 'cancelled';
@@ -138,4 +149,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-    }
+          }

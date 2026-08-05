@@ -1,7 +1,6 @@
 import dbConnect from '../../../lib/db';
 import Cart from '../../../models/Cart';
 import Product from '../../../models/Product';
-import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
 
@@ -18,12 +17,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    const user = await User.findOne({ email: session.user.email });
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    const userId = user._id.toString();
+    const userId = session.user.id;
     const { productId, quantity } = req.body;
 
     if (!productId) {
@@ -34,6 +28,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Quantity must be at least 1' });
     }
 
+    // Check product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -49,15 +44,16 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    const item = cart.items.find(
-      (item) => item.product.toString() === productId
+    // Find and update item
+    const itemIndex = cart.items.findIndex(
+      (item) => item.product && item.product.toString() === productId
     );
 
-    if (!item) {
+    if (itemIndex === -1) {
       return res.status(404).json({ message: 'Item not found in cart' });
     }
 
-    item.quantity = quantity;
+    cart.items[itemIndex].quantity = quantity;
     await cart.save();
     await cart.populate('items.product');
 

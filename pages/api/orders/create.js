@@ -32,8 +32,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Your cart is empty' });
     }
 
+    // ✅ Safety Check: শুধু valid product থাকা আইটেম নিন
+    const validItems = cart.items.filter((item) => item.product);
+
+    if (validItems.length === 0) {
+      return res.status(400).json({ message: 'No valid products in cart' });
+    }
+
     // স্টক চেক করুন
-    for (const item of cart.items) {
+    for (const item of validItems) {
       const product = await Product.findById(item.product._id);
       if (!product || product.stock < item.quantity) {
         return res.status(400).json({
@@ -43,7 +50,7 @@ export default async function handler(req, res) {
     }
 
     // অর্ডার আইটেম তৈরি করুন
-    const orderItems = cart.items.map((item) => ({
+    const orderItems = validItems.map((item) => ({
       product: item.product._id,
       name: item.product.name,
       price: item.price,
@@ -51,12 +58,16 @@ export default async function handler(req, res) {
       image: item.product.images && item.product.images.length > 0 ? item.product.images[0] : '',
     }));
 
+    // মোট দাম 계산
+    const totalPrice = validItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalItems = validItems.reduce((sum, item) => sum + item.quantity, 0);
+
     // অর্ডার তৈরি করুন
     const order = await Order.create({
       user: userId,
       items: orderItems,
-      totalPrice: cart.totalPrice,
-      totalItems: cart.totalItems,
+      totalPrice,
+      totalItems,
       shippingAddress,
       paymentMethod,
       notes,
@@ -65,16 +76,14 @@ export default async function handler(req, res) {
     });
 
     // স্টক আপডেট করুন
-    for (const item of cart.items) {
+    for (const item of validItems) {
       await Product.findByIdAndUpdate(item.product._id, {
         $inc: { stock: -item.quantity },
       });
     }
 
-    // কার্ট খালি করুন
-    cart.items = [];
-    cart.totalPrice = 0;
-    cart.totalItems = 0;
+    // কার্ট খালি করুন (শুধু valid items সরান)
+    cart.items = cart.items.filter((item) => !item.product);
     await cart.save();
 
     res.status(201).json({
@@ -86,4 +95,4 @@ export default async function handler(req, res) {
     console.error('Order create error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-  }
+        }

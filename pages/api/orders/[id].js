@@ -66,17 +66,25 @@ export default async function handler(req, res) {
     }
   }
 
-  // DELETE: অর্ডার ডিলিট করুন (শুধু Admin)
+  // ✅ DELETE: অর্ডার ডিলিট করুন (Admin + Customer)
   else if (req.method === 'DELETE') {
-    if (!isAdmin) {
-      return res.status(403).json({ message: 'Access denied. Admin only.' });
-    }
-
     try {
+      // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
+      if (!isAdmin) {
+        const order = await Order.findById(id);
+        if (!order) {
+          return res.status(404).json({ message: 'Order not found' });
+        }
+        if (order.user._id.toString() !== session.user.id) {
+          return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
+        }
+      }
+
       const order = await Order.findByIdAndDelete(id);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
+      
       res.status(200).json({
         success: true,
         message: 'Order deleted successfully',
@@ -90,4 +98,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-                        }
+    }

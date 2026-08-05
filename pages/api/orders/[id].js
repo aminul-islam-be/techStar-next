@@ -66,31 +66,71 @@ export default async function handler(req, res) {
     }
   }
 
-  // ✅ DELETE: অর্ডার ডিলিট করুন (Admin + Customer)
+  // ✅ DELETE: অর্ডার ডিলিট (My History / Order History)
   else if (req.method === 'DELETE') {
     try {
-      // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
-      if (!isAdmin) {
-        const order = await Order.findById(id);
-        if (!order) {
-          return res.status(404).json({ message: 'Order not found' });
-        }
-        if (order.user._id.toString() !== session.user.id) {
-          return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
-        }
-      }
-
-      const order = await Order.findByIdAndDelete(id);
+      const order = await Order.findById(id);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-      
+
+      // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
+      if (!isAdmin && order.user._id.toString() !== session.user.id) {
+        return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
+      }
+
+      // ✅ ডিলিটের ধরন সেট করুন
+      order.isDeleted = true;
+      order.deletedBy = isAdmin ? 'admin' : 'customer';
+      order.deletedAt = new Date();
+
+      // ✅ কাস্টমার ডিলিট করলে ১ মাস পর Auto Delete
+      if (!isAdmin) {
+        order.autoDeleteAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      }
+
+      await order.save();
+
       res.status(200).json({
         success: true,
-        message: 'Order deleted successfully',
+        message: 'Order moved to history',
+        order,
       });
     } catch (error) {
       console.error('Order delete error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // ✅ CANCEL: অর্ডার ক্যান্সেল (Customer)
+  else if (req.method === 'PATCH' && req.body?.action === 'cancel') {
+    try {
+      const order = await Order.findById(id);
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+
+      // Customer চেক: শুধু নিজের অর্ডার ক্যান্সেল করতে পারবে
+      if (!isAdmin && order.user._id.toString() !== session.user.id) {
+        return res.status(403).json({ message: 'Access denied. You can only cancel your own orders.' });
+      }
+
+      if (order.status === 'cancelled') {
+        return res.status(400).json({ message: 'Order already cancelled' });
+      }
+
+      order.status = 'cancelled';
+      order.isCancelled = true;
+      order.cancelledAt = new Date();
+      await order.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Order cancelled successfully',
+        order,
+      });
+    } catch (error) {
+      console.error('Order cancel error:', error);
       res.status(500).json({ message: error.message });
     }
   }

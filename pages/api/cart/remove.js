@@ -1,6 +1,5 @@
 import dbConnect from '../../../lib/db';
 import Cart from '../../../models/Cart';
-import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
 
@@ -17,12 +16,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    const user = await User.findOne({ email: session.user.email });
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    const userId = user._id.toString();
+    const userId = session.user.id;
     const { productId } = req.body;
 
     if (!productId) {
@@ -35,8 +29,9 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
+    // Remove item
     cart.items = cart.items.filter(
-      (item) => item.product.toString() !== productId
+      (item) => !item.product || item.product.toString() !== productId
     );
 
     await cart.save();

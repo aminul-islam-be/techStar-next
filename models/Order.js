@@ -80,10 +80,10 @@ const OrderSchema = new mongoose.Schema({
     default: 'cash',
   },
   paymentStatus: {
-  type: String,
-  enum: ['pending', 'paid', 'unpaid'],
-  default: 'pending',
-},
+    type: String,
+    enum: ['pending', 'paid', 'unpaid'],
+    default: 'pending',
+  },
   notes: {
     type: String,
     default: '',
@@ -91,6 +91,32 @@ const OrderSchema = new mongoose.Schema({
   trxId: {
     type: String,
     default: '',
+  },
+  // ✅ Delete & Cancel ফিল্ড যোগ করা হলো
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedBy: {
+    type: String,
+    enum: ['customer', 'admin', null],
+    default: null,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+  autoDeleteAt: {
+    type: Date,
+    default: null,
+  },
+  isCancelled: {
+    type: Boolean,
+    default: false,
+  },
+  cancelledAt: {
+    type: Date,
+    default: null,
   },
   createdAt: {
     type: Date,

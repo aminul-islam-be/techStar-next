@@ -20,14 +20,8 @@ export default async function handler(req, res) {
     const userId = session.user.id;
     const { productId, quantity = 1 } = req.body;
 
-    // ✅ productId আছে কিনা চেক করুন
     if (!productId) {
       return res.status(400).json({ message: 'Product ID is required' });
-    }
-
-    // ✅ productId সঠিক ফরম্যাটে আছে কিনা চেক করুন
-    if (typeof productId !== 'string' || productId.length < 10) {
-      return res.status(400).json({ message: 'Invalid product ID format' });
     }
 
     const product = await Product.findById(productId);
@@ -48,13 +42,16 @@ export default async function handler(req, res) {
       });
     }
 
-    const existingItem = cart.items.find(
+    // ✅ Check if item already exists
+    const existingItemIndex = cart.items.findIndex(
       (item) => item.product && item.product.toString() === productId
     );
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
+    if (existingItemIndex !== -1) {
+      // Update existing item
+      cart.items[existingItemIndex].quantity += quantity;
     } else {
+      // Add new item
       cart.items.push({
         product: productId,
         quantity: quantity,

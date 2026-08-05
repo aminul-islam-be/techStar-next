@@ -4,37 +4,34 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  await dbConnect();
+
+  const session = await getServerSession(req, res, authOptions);
+  if (!session || !session.user) {
+    return res.status(401).json({ message: 'Please login first' });
   }
 
-  try {
-    await dbConnect();
+  if (session.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied. Admin only.' });
+  }
 
-    const session = await getServerSession(req, res, authOptions);
-    if (!session || !session.user) {
-      return res.status(401).json({ message: 'Please login first' });
+  if (req.method === 'GET') {
+    try {
+      // ✅ শুধু active অর্ডার দেখাবে (deleted নয়)
+      const orders = await Order.find({ isDeleted: false })
+        .populate('user', 'name email')
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({
+        success: true,
+        count: orders.length,
+        orders,
+      });
+    } catch (error) {
+      console.error('Orders fetch error:', error);
+      res.status(500).json({ message: error.message });
     }
-
-    if (session.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied. Admin only.' });
-    }
-
-    // ✅ শুধু Admin deleted অর্ডার দেখাবে
-    const orders = await Order.find({
-      isDeleted: true,
-      deletedBy: 'admin',
-    })
-      .populate('user', 'name email')
-      .sort({ deletedAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders,
-    });
-  } catch (error) {
-    console.error('Admin history error:', error);
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

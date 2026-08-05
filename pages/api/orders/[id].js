@@ -57,7 +57,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ✅ DELETE: অর্ডার ডিলিট (My History তে যাবে)
+  // ✅ DELETE: Customer হলে My History, Admin হলে Admin's Order History
   else if (req.method === 'DELETE') {
     try {
       const order = await Order.findById(id);
@@ -65,32 +65,31 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Order not found' });
       }
 
-      // Customer চেক
-      if (!isAdmin && order.user._id.toString() !== session.user.id) {
+      if (!isAdmin && order.user.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
       }
 
-      if (order.isDeleted) {
-        return res.status(400).json({ message: 'Order already deleted' });
-      }
-
-      // ✅ ডিলিটের ধরন সেট করুন
-      order.isDeleted = true;
-      order.deletedBy = isAdmin ? 'admin' : 'customer';
-      order.deletedAt = new Date();
-
-      // ✅ কাস্টমার ডিলিট করলে ১ মাস পর Auto Delete
-      if (!isAdmin) {
+      if (isAdmin) {
+        if (order.adminDeleted) {
+          return res.status(400).json({ message: 'Order already in admin history' });
+        }
+        order.adminDeleted = true;
+        order.adminDeletedAt = new Date();
+      } else {
+        if (order.isDeleted) {
+          return res.status(400).json({ message: 'Order already deleted' });
+        }
+        order.isDeleted = true;
+        order.deletedBy = 'customer';
+        order.deletedAt = new Date();
         order.autoDeleteAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       }
 
       await order.save();
 
-      console.log('Order deleted by:', order.deletedBy); // ডিবাগ লগ
-
       res.status(200).json({
         success: true,
-        message: 'Order moved to history',
+        message: isAdmin ? 'Order moved to Order History' : 'Order moved to My History',
         order,
       });
     } catch (error) {
@@ -99,14 +98,14 @@ export default async function handler(req, res) {
     }
   }
 
-  // ✅ CANCEL: অর্ডার ক্যান্সেল
+  // ✅ CANCEL: শুধু Customer করতে পারবে, My History তে যাবে
   else if (req.method === 'PATCH' && req.body?.action === 'cancel') {
     try {
       const order = await Order.findById(id);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-      if (!isAdmin && order.user._id.toString() !== session.user.id) {
+      if (!isAdmin && order.user.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only cancel your own orders.' });
       }
       if (order.status === 'cancelled') {
@@ -115,9 +114,18 @@ export default async function handler(req, res) {
       if (order.isDeleted) {
         return res.status(400).json({ message: 'Cannot cancel a deleted order' });
       }
+
       order.status = 'cancelled';
       order.isCancelled = true;
       order.cancelledAt = new Date();
+
+      if (!isAdmin) {
+        order.isDeleted = true;
+        order.deletedBy = 'customer';
+        order.deletedAt = new Date();
+        order.autoDeleteAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      }
+
       await order.save();
       res.status(200).json({
         success: true,
@@ -133,4 +141,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-                                      }
+        }

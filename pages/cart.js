@@ -42,71 +42,50 @@ export default function CartPage() {
   };
 
   // ✅ পরিমাণ বাড়ানোর ফাংশন
-  const increaseQuantity = async (productId) => {
-    const item = cart.items.find((i) => i.product._id === productId);
-    if (item) {
-      await updateQuantity(productId, item.quantity + 1);
-    }
-  };
+  // ✅ পরিমাণ বাড়ানোর ফাংশন
+const increaseQuantity = async (productId) => {
+  const item = cart.items.find((i) => i.product && i.product._id === productId);
+  if (item) {
+    await updateQuantity(productId, item.quantity + 1);
+  }
+};
 
-  // ✅ পরিমাণ কমানোর ফাংশন
-  const decreaseQuantity = async (productId) => {
-    const item = cart.items.find((i) => i.product._id === productId);
-    if (item && item.quantity > 1) {
-      await updateQuantity(productId, item.quantity - 1);
-    }
-  };
+// ✅ পরিমাণ কমানোর ফাংশন
+const decreaseQuantity = async (productId) => {
+  const item = cart.items.find((i) => i.product && i.product._id === productId);
+  if (item && item.quantity > 1) {
+    await updateQuantity(productId, item.quantity - 1);
+  }
+};
 
-  const updateQuantity = async (productId, newQuantity) => {
-    if (newQuantity < 1) return;
-    setUpdating(true);
+// ✅ পণ্য সরানোর ফাংশন
+const removeItem = async (productId) => {
+  if (!confirm('Remove this item from cart?')) return;
+  setUpdating(true);
 
-    try {
-      const res = await fetch('/api/cart/update', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity: newQuantity }),
+  try {
+    const res = await fetch('/api/cart/remove', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      const validItems = data.cart.items.filter((item) => item.product);
+      setCart({
+        ...data.cart,
+        items: validItems,
       });
-      const data = await res.json();
-      if (data.success) {
-        const validItems = data.cart.items.filter((item) => item.product);
-        setCart({
-          ...data.cart,
-          items: validItems,
-        });
-      }
-    } catch (error) {
-      console.error('Error updating cart:', error);
-    } finally {
-      setUpdating(false);
+    } else {
+      alert(data.message || 'Failed to remove item');
     }
-  };
-
-  // ✅ পণ্য সরানোর ফাংশন
-  const removeItem = async (productId) => {
-    if (!confirm('Remove this item from cart?')) return;
-    setUpdating(true);
-
-    try {
-      const res = await fetch('/api/cart/remove', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const validItems = data.cart.items.filter((item) => item.product);
-        setCart({
-          ...data.cart,
-          items: validItems,
-        });
-      }
-    } catch (error) {
-      console.error('Error removing item:', error);
-    } finally {
-      setUpdating(false);
-    }
-  };
+  } catch (error) {
+    console.error('Error removing item:', error);
+    alert('❌ Something went wrong');
+  } finally {
+    setUpdating(false);
+  }
+};
 
   if (loading) {
     return (

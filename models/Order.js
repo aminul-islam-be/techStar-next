@@ -80,10 +80,10 @@ const OrderSchema = new mongoose.Schema({
     default: 'cash',
   },
   paymentStatus: {
-    type: String,
-    enum: ['pending', 'paid', 'failed'],
-    default: 'pending',
-  },
+  type: String,
+  enum: ['pending', 'paid', 'unpaid'],
+  default: 'pending',
+},
   notes: {
     type: String,
     default: '',

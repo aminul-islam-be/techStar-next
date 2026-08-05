@@ -11,23 +11,19 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Please login first' });
   }
 
-  // Admin অথবা Order এর Owner (Customer) চেক করুন
   const isAdmin = session.user.role === 'admin';
   const { id } = req.query;
 
-  // GET: একটি অর্ডার দেখুন (Admin অথবা Customer)
+  // GET: অর্ডার দেখুন
   if (req.method === 'GET') {
     try {
       const order = await Order.findById(id).populate('user', 'name email');
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-
-      // Customer চেক: শুধু নিজের অর্ডার দেখতে পারবে
       if (!isAdmin && order.user._id.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied' });
       }
-
       res.status(200).json({ success: true, order });
     } catch (error) {
       console.error('Order fetch error:', error);
@@ -35,26 +31,21 @@ export default async function handler(req, res) {
     }
   }
 
-  // PUT: অর্ডার আপডেট করুন (শুধু Admin)
+  // PUT: অর্ডার আপডেট (শুধু Admin)
   else if (req.method === 'PUT') {
     if (!isAdmin) {
       return res.status(403).json({ message: 'Access denied. Admin only.' });
     }
-
     try {
       const { status, paymentStatus, notes } = req.body;
-
       const order = await Order.findById(id);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-
       if (status) order.status = status;
       if (paymentStatus) order.paymentStatus = paymentStatus;
       if (notes !== undefined) order.notes = notes;
-
       await order.save();
-
       res.status(200).json({
         success: true,
         message: 'Order updated successfully',
@@ -74,12 +65,11 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Order not found' });
       }
 
-      // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
+      // Customer চেক
       if (!isAdmin && order.user._id.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
       }
 
-      // অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
       if (order.isDeleted) {
         return res.status(400).json({ message: 'Order already deleted' });
       }
@@ -96,6 +86,8 @@ export default async function handler(req, res) {
 
       await order.save();
 
+      console.log('Order deleted by:', order.deletedBy); // ডিবাগ লগ
+
       res.status(200).json({
         success: true,
         message: 'Order moved to history',
@@ -107,32 +99,26 @@ export default async function handler(req, res) {
     }
   }
 
-  // ✅ CANCEL: অর্ডার ক্যান্সেল (Customer)
+  // ✅ CANCEL: অর্ডার ক্যান্সেল
   else if (req.method === 'PATCH' && req.body?.action === 'cancel') {
     try {
       const order = await Order.findById(id);
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-
-      // Customer চেক: শুধু নিজের অর্ডার ক্যান্সেল করতে পারবে
       if (!isAdmin && order.user._id.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only cancel your own orders.' });
       }
-
       if (order.status === 'cancelled') {
         return res.status(400).json({ message: 'Order already cancelled' });
       }
-
       if (order.isDeleted) {
         return res.status(400).json({ message: 'Cannot cancel a deleted order' });
       }
-
       order.status = 'cancelled';
       order.isCancelled = true;
       order.cancelledAt = new Date();
       await order.save();
-
       res.status(200).json({
         success: true,
         message: 'Order cancelled successfully',
@@ -147,4 +133,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-}
+                                      }

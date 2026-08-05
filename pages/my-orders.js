@@ -50,6 +50,29 @@ export default function MyOrders() {
     });
   };
 
+  // ✅ Payment Status অনুযায়ী Text ও Style
+  const getPaymentStatusDisplay = (order) => {
+    const status = order.paymentStatus || 'pending';
+    
+    if (status === 'pending') {
+      return {
+        text: '⏳ Order in Processing',
+        className: 'statusPending'
+      };
+    } else if (status === 'paid') {
+      return {
+        text: '✅ Order Complete | Payable: $0',
+        className: 'statusPaid'
+      };
+    } else if (status === 'unpaid') {
+      return {
+        text: `✅ Order Complete | ⚠️ Payable: $${order.totalPrice.toFixed(2)}`,
+        className: 'statusUnpaid'
+      };
+    }
+    return { text: '', className: '' };
+  };
+
   if (status === 'loading' || loading) {
     return (
       <div>
@@ -77,31 +100,39 @@ export default function MyOrders() {
           </div>
         ) : (
           <div className="ordersList">
-            {orders.map((order) => (
-              <Link href={`/orders/${order._id}`} key={order._id} className="orderCard">
-                <div className="orderHeader">
-                  <span className="orderId">Order #{order._id.slice(-6)}</span>
-                  <OrderStatusBadge status={order.status} />
-                </div>
+            {orders.map((order) => {
+              const paymentDisplay = getPaymentStatusDisplay(order);
+              return (
+                <Link href={`/orders/${order._id}`} key={order._id} className="orderCard">
+                  <div className="orderHeader">
+                    <span className="orderId">Order #{order._id.slice(-6)}</span>
+                    <OrderStatusBadge status={order.status} />
+                  </div>
 
-                <div className="orderDetails">
-                  <div className="orderItems">
-                    {order.items.slice(0, 3).map((item, index) => (
-                      <span key={index} className="itemName">
-                        {item.name} × {item.quantity}
-                      </span>
-                    ))}
-                    {order.items.length > 3 && (
-                      <span className="moreItems">+{order.items.length - 3} more</span>
-                    )}
+                  <div className="orderDetails">
+                    <div className="orderItems">
+                      {order.items.slice(0, 3).map((item, index) => (
+                        <span key={index} className="itemName">
+                          {item.name} × {item.quantity}
+                        </span>
+                      ))}
+                      {order.items.length > 3 && (
+                        <span className="moreItems">+{order.items.length - 3} more</span>
+                      )}
+                    </div>
+                    <div className="orderMeta">
+                      <span className="orderTotal">${order.totalPrice.toFixed(2)}</span>
+                      <span className="orderDate">{formatDate(order.createdAt)}</span>
+                    </div>
                   </div>
-                  <div className="orderMeta">
-                    <span className="orderTotal">${order.totalPrice.toFixed(2)}</span>
-                    <span className="orderDate">{formatDate(order.createdAt)}</span>
+
+                  {/* ✅ Payment Status Display */}
+                  <div className={`orderPaymentStatus ${paymentDisplay.className}`}>
+                    {paymentDisplay.text}
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
@@ -243,6 +274,27 @@ export default function MyOrders() {
           color: #999;
         }
 
+        /* ✅ Payment Status Styles */
+        .orderPaymentStatus {
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid #f0f0f0;
+          font-size: 0.95rem;
+          font-weight: 600;
+        }
+
+        .statusPending {
+          color: #ffc107;
+        }
+
+        .statusPaid {
+          color: #28a745;
+        }
+
+        .statusUnpaid {
+          color: #dc3545;
+        }
+
         @media (max-width: 600px) {
           h1 {
             font-size: 1.5rem;
@@ -269,8 +321,12 @@ export default function MyOrders() {
           .orderTotal {
             font-size: 1rem;
           }
+
+          .orderPaymentStatus {
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </>
   );
-      }
+}

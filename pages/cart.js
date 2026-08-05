@@ -111,43 +111,46 @@ export default function CartPage() {
         ) : (
           <>
             <div className="cartItems">
-              {cart.items.map((item) => (
-                <div key={item.product._id} className="cartItem">
-                  <div className="itemInfo">
-                    <h3>{item.product.name}</h3>
-                    <p className="price">${item.product.price.toFixed(2)}</p>
-                  </div>
+              {/* ✅ Safety Check: product null/undefined হলে স্কিপ করবে */}
+              {cart.items
+                .filter((item) => item.product)
+                .map((item) => (
+                  <div key={item.product._id} className="cartItem">
+                    <div className="itemInfo">
+                      <h3>{item.product.name}</h3>
+                      <p className="price">${item.product.price.toFixed(2)}</p>
+                    </div>
 
-                  <div className="itemControls">
-                    <button
-                      onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
-                      disabled={updating || item.quantity <= 1}
-                      className="qtyBtn"
-                    >
-                      −
-                    </button>
-                    <span className="qty">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                      disabled={updating}
-                      className="qtyBtn"
-                    >
-                      +
-                    </button>
-                  </div>
+                    <div className="itemControls">
+                      <button
+                        onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                        disabled={updating || item.quantity <= 1}
+                        className="qtyBtn"
+                      >
+                        −
+                      </button>
+                      <span className="qty">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                        disabled={updating}
+                        className="qtyBtn"
+                      >
+                        +
+                      </button>
+                    </div>
 
-                  <div className="itemTotal">
-                    <p>${(item.product.price * item.quantity).toFixed(2)}</p>
-                    <button
-                      onClick={() => removeItem(item.product._id)}
-                      disabled={updating}
-                      className="removeBtn"
-                    >
-                      ✕
-                    </button>
+                    <div className="itemTotal">
+                      <p>${(item.product.price * item.quantity).toFixed(2)}</p>
+                      <button
+                        onClick={() => removeItem(item.product._id)}
+                        disabled={updating}
+                        className="removeBtn"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
 
             <div className="cartSummary">
@@ -159,7 +162,6 @@ export default function CartPage() {
                 <span>💰 Total Price:</span>
                 <span className="value">${cart.totalPrice.toFixed(2)}</span>
               </div>
-              {/* ✅ Checkout লিংক ঠিক করা হলো */}
               <Link href="/checkout" className="btn btn-primary checkoutBtn">
                 🛒 Proceed to Checkout →
               </Link>
@@ -460,4 +462,4 @@ export default function CartPage() {
       `}</style>
     </>
   );
-                    }
+                          }

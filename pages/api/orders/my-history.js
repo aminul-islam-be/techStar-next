@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    // ✅ Customer এর deleted অর্ডার খুঁজুন
+    // ✅ Customer এর deleted অর্ডার খুঁজুন (deletedBy: 'customer')
     const orders = await Order.find({
       user: session.user.id,
       isDeleted: true,
@@ -25,14 +25,12 @@ export default async function handler(req, res) {
       .populate('user', 'name email')
       .sort({ deletedAt: -1 });
 
-    // ✅ 30 দিনের বেশি পুরনো অর্ডার Auto Delete (ফিল্টার)
+    // ✅ 30 দিনের বেশি পুরনো অর্ডার ফিল্টার করুন
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const activeHistory = orders.filter(order => {
-      // autoDeleteAt না থাকলে দেখান
       if (!order.autoDeleteAt) return true;
-      // autoDeleteAt তারিখ যদি আজকের থেকে বড় হয় (অর্থাৎ 30 দিন পার হয়নি)
       return new Date(order.autoDeleteAt) > new Date();
     });
 
@@ -45,4 +43,4 @@ export default async function handler(req, res) {
     console.error('My history error:', error);
     res.status(500).json({ message: error.message });
   }
-}
+      }

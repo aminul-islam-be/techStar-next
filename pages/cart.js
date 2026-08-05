@@ -43,33 +43,43 @@ export default function CartPage() {
 
   // ✅ পরিমাণ বাড়ানোর ফাংশন
   // ✅ পরিমাণ বাড়ানোর ফাংশন
+  // ✅ পরিমাণ বাড়ানোর ফাংশন
 const increaseQuantity = async (productId) => {
+  console.log('Increase clicked for:', productId);
   const item = cart.items.find((i) => i.product && i.product._id === productId);
   if (item) {
-    await updateQuantity(productId, item.quantity + 1);
+    const newQty = item.quantity + 1;
+    console.log('New quantity:', newQty);
+    await updateQuantity(productId, newQty);
   }
 };
 
 // ✅ পরিমাণ কমানোর ফাংশন
 const decreaseQuantity = async (productId) => {
+  console.log('Decrease clicked for:', productId);
   const item = cart.items.find((i) => i.product && i.product._id === productId);
   if (item && item.quantity > 1) {
-    await updateQuantity(productId, item.quantity - 1);
+    const newQty = item.quantity - 1;
+    console.log('New quantity:', newQty);
+    await updateQuantity(productId, newQty);
   }
 };
 
-// ✅ পণ্য সরানোর ফাংশন
-const removeItem = async (productId) => {
-  if (!confirm('Remove this item from cart?')) return;
+// ✅ Update Quantity ফাংশন
+const updateQuantity = async (productId, newQuantity) => {
+  if (newQuantity < 1) return;
   setUpdating(true);
 
   try {
-    const res = await fetch('/api/cart/remove', {
-      method: 'DELETE',
+    console.log('Sending update:', { productId, quantity: newQuantity });
+    const res = await fetch('/api/cart/update', {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId }),
+      body: JSON.stringify({ productId, quantity: newQuantity }),
     });
     const data = await res.json();
+    console.log('Update response:', data);
+    
     if (data.success) {
       const validItems = data.cart.items.filter((item) => item.product);
       setCart({
@@ -77,16 +87,16 @@ const removeItem = async (productId) => {
         items: validItems,
       });
     } else {
-      alert(data.message || 'Failed to remove item');
+      alert(data.message || 'Failed to update cart');
     }
   } catch (error) {
-    console.error('Error removing item:', error);
+    console.error('Error updating cart:', error);
     alert('❌ Something went wrong');
   } finally {
     setUpdating(false);
   }
 };
-
+  
   if (loading) {
     return (
       <div className="loading">

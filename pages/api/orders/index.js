@@ -2,6 +2,7 @@ import dbConnect from '../../../lib/db';
 import Order from '../../../models/Order';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
+
 export default async function handler(req, res) {
   await dbConnect();
 
@@ -10,14 +11,14 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Please login first' });
   }
 
-  // শুধুমাত্র Admin অর্ডার দেখতে পারে
   if (session.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admin only.' });
   }
 
   if (req.method === 'GET') {
     try {
-      const orders = await Order.find({})
+      // ✅ শুধু adminDeleted:true বাদ দিয়ে সব দেখাবে
+      const orders = await Order.find({ adminDeleted: { $ne: true } })
         .populate('user', 'name email')
         .sort({ createdAt: -1 });
 

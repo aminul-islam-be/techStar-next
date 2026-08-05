@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       return res.status(403).json({ message: 'Access denied. Admin only.' });
     }
 
-    // ✅ Admin এর deleted অর্ডার খুঁজুন (deletedBy: 'admin')
+    // ✅ শুধু Admin deleted অর্ডার দেখাবে
     const orders = await Order.find({
       isDeleted: true,
       deletedBy: 'admin',

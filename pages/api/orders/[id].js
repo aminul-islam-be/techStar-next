@@ -66,7 +66,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ✅ DELETE: অর্ডার ডিলিট (My History / Order History)
+  // ✅ DELETE: অর্ডার ডিলিট (My History তে যাবে)
   else if (req.method === 'DELETE') {
     try {
       const order = await Order.findById(id);
@@ -74,17 +74,12 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Order not found' });
       }
 
-      // 🔍 ডিবাগ লগ
-      console.log('Delete request - isAdmin:', isAdmin);
-      console.log('Delete request - userId:', session.user.id);
-      console.log('Delete request - order userId:', order.user._id.toString());
-
       // Customer চেক: শুধু নিজের অর্ডার ডিলিট করতে পারবে
       if (!isAdmin && order.user._id.toString() !== session.user.id) {
         return res.status(403).json({ message: 'Access denied. You can only delete your own orders.' });
       }
 
-      // ✅ অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
+      // অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
       if (order.isDeleted) {
         return res.status(400).json({ message: 'Order already deleted' });
       }
@@ -100,8 +95,6 @@ export default async function handler(req, res) {
       }
 
       await order.save();
-
-      console.log('Order deleted by:', order.deletedBy); // ডিবাগ লগ
 
       res.status(200).json({
         success: true,
@@ -127,12 +120,10 @@ export default async function handler(req, res) {
         return res.status(403).json({ message: 'Access denied. You can only cancel your own orders.' });
       }
 
-      // ✅ অর্ডার ইতিমধ্যে ক্যান্সেল হয়েছে কিনা চেক করুন
       if (order.status === 'cancelled') {
         return res.status(400).json({ message: 'Order already cancelled' });
       }
 
-      // ✅ অর্ডার ইতিমধ্যে ডিলিট হয়েছে কিনা চেক করুন
       if (order.isDeleted) {
         return res.status(400).json({ message: 'Cannot cancel a deleted order' });
       }

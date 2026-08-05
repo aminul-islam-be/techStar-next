@@ -92,7 +92,7 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  // ✅ Delete & Cancel ফিল্ড যোগ করা হলো
+  // ✅ Customer এর delete/cancel ফিল্ড (My History এর জন্য)
   isDeleted: {
     type: Boolean,
     default: false,
@@ -115,6 +115,15 @@ const OrderSchema = new mongoose.Schema({
     default: false,
   },
   cancelledAt: {
+    type: Date,
+    default: null,
+  },
+  // ✅ Admin এর নিজস্ব delete/history ফিল্ড
+  adminDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  adminDeletedAt: {
     type: Date,
     default: null,
   },

@@ -28,7 +28,6 @@ export default function CartPage() {
       const res = await fetch('/api/cart/get');
       const data = await res.json();
       if (data.success) {
-        // ✅ Safety Check: product null/undefined হলে ফিল্টার করুন
         const validItems = data.cart.items.filter((item) => item.product);
         setCart({
           ...data.cart,
@@ -39,6 +38,22 @@ export default function CartPage() {
       console.error('Error fetching cart:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ✅ পরিমাণ বাড়ানোর ফাংশন
+  const increaseQuantity = async (productId) => {
+    const item = cart.items.find((i) => i.product._id === productId);
+    if (item) {
+      await updateQuantity(productId, item.quantity + 1);
+    }
+  };
+
+  // ✅ পরিমাণ কমানোর ফাংশন
+  const decreaseQuantity = async (productId) => {
+    const item = cart.items.find((i) => i.product._id === productId);
+    if (item && item.quantity > 1) {
+      await updateQuantity(productId, item.quantity - 1);
     }
   };
 
@@ -67,7 +82,9 @@ export default function CartPage() {
     }
   };
 
+  // ✅ পণ্য সরানোর ফাংশন
   const removeItem = async (productId) => {
+    if (!confirm('Remove this item from cart?')) return;
     setUpdating(true);
 
     try {
@@ -128,13 +145,16 @@ export default function CartPage() {
                 .filter((item) => item.product)
                 .map((item) => (
                   <div key={item.product._id} className="cartItem">
-                    <div className="itemImageWrapper">
-                      {item.product.images && item.product.images.length > 0 ? (
-                        <img src={item.product.images[0]} alt={item.product.name} className="itemImage" />
-                      ) : (
-                        <div className="itemNoImage">📷</div>
-                      )}
-                    </div>
+                    {/* ✅ ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
+                    <Link href={`/products/${item.product._id}`} className="itemImageLink">
+                      <div className="itemImageWrapper">
+                        {item.product.images && item.product.images.length > 0 ? (
+                          <img src={item.product.images[0]} alt={item.product.name} className="itemImage" />
+                        ) : (
+                          <div className="itemNoImage">📷</div>
+                        )}
+                      </div>
+                    </Link>
 
                     <div className="itemDetails">
                       <div className="itemInfo">
@@ -143,16 +163,18 @@ export default function CartPage() {
                       </div>
 
                       <div className="itemControls">
+                        {/* ✅ - বাটন */}
                         <button
-                          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                          onClick={() => decreaseQuantity(item.product._id)}
                           disabled={updating || item.quantity <= 1}
                           className="qtyBtn"
                         >
                           −
                         </button>
                         <span className="qty">{item.quantity}</span>
+                        {/* ✅ + বাটন */}
                         <button
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                          onClick={() => increaseQuantity(item.product._id)}
                           disabled={updating}
                           className="qtyBtn"
                         >
@@ -162,6 +184,7 @@ export default function CartPage() {
 
                       <div className="itemTotal">
                         <p>${(item.product.price * item.quantity).toFixed(2)}</p>
+                        {/* ✅ ✕ বাটন */}
                         <button
                           onClick={() => removeItem(item.product._id)}
                           disabled={updating}
@@ -296,6 +319,16 @@ export default function CartPage() {
           border-bottom: none;
         }
 
+        .itemImageLink {
+          flex-shrink: 0;
+          cursor: pointer;
+          transition: opacity 0.3s;
+        }
+
+        .itemImageLink:hover {
+          opacity: 0.85;
+        }
+
         .itemImageWrapper {
           width: 80px;
           height: 80px;
@@ -305,7 +338,6 @@ export default function CartPage() {
           align-items: center;
           justify-content: center;
           overflow: hidden;
-          flex-shrink: 0;
           border: 1px solid #eee;
         }
 
@@ -503,6 +535,10 @@ export default function CartPage() {
             align-items: stretch;
           }
 
+          .itemImageLink {
+            width: 100%;
+          }
+
           .itemImageWrapper {
             width: 100%;
             height: 150px;
@@ -529,4 +565,4 @@ export default function CartPage() {
       `}</style>
     </>
   );
-          }
+  }

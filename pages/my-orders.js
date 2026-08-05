@@ -52,7 +52,6 @@ export default function MyOrders() {
     });
   };
 
-  // ✅ Payment Status অনুযায়ী Text ও Style
   const getPaymentStatusDisplay = (order) => {
     const status = order.paymentStatus || 'pending';
     
@@ -75,7 +74,7 @@ export default function MyOrders() {
     return { text: '', className: '' };
   };
 
-  // ✅ Delete Order (শুধু My Orders থেকে সরাবে)
+  // ✅ Delete Order (My History তে যাবে)
   const handleDelete = async (orderId) => {
     if (!confirm('Are you sure you want to delete this order from your list?')) return;
     
@@ -87,7 +86,7 @@ export default function MyOrders() {
       const data = await res.json();
       if (data.success) {
         setOrders(orders.filter(o => o._id !== orderId));
-        alert('✅ Order deleted from your list!');
+        alert('✅ Order moved to My History!');
       } else {
         alert(data.message || 'Failed to delete order');
       }
@@ -100,25 +99,23 @@ export default function MyOrders() {
     }
   };
 
-  // ✅ Cancel Order (Admin-এ Cancelled দেখাবে)
+  // ✅ Cancel Order (PATCH method with action: 'cancel')
   const handleCancel = async (orderId) => {
     if (!confirm('Are you sure you want to cancel this order?')) return;
     
     setProcessing(true);
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'cancelled' }),
+        body: JSON.stringify({ action: 'cancel' }),
       });
       const data = await res.json();
       if (data.success) {
-        // অর্ডার লিস্ট আপডেট করুন
         setOrders(orders.map(o => 
           o._id === orderId ? { ...o, status: 'cancelled' } : o
         ));
         alert('✅ Order cancelled successfully!');
-        // Admin Panel-এ Cancelled দেখাবে
       } else {
         alert(data.message || 'Failed to cancel order');
       }
@@ -170,7 +167,6 @@ export default function MyOrders() {
                     <span className="orderId">Order #{order._id.slice(-6)}</span>
                     <div className="headerRight">
                       <OrderStatusBadge status={order.status} />
-                      {/* ✅ ৩টি ডট মেনু */}
                       <div className="menuWrapper">
                         <button 
                           className="menuBtn" 
@@ -323,7 +319,6 @@ export default function MyOrders() {
           font-size: 1.1rem;
         }
 
-        /* ✅ ৩টি ডট মেনু */
         .menuWrapper {
           position: relative;
         }
@@ -505,4 +500,4 @@ export default function MyOrders() {
       `}</style>
     </>
   );
-    }
+                }

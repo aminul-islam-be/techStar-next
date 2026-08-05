@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Your cart is empty' });
     }
 
-    // ✅ Safety Check: শুধু valid product থাকা আইটেম নিন
+    // Safety Check: শুধু valid product থাকা আইটেম নিন
     const validItems = cart.items.filter((item) => item.product);
 
     if (validItems.length === 0) {
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       image: item.product.images && item.product.images.length > 0 ? item.product.images[0] : '',
     }));
 
-    // মোট দাম 계산
+    // মোট দাম গণনা
     const totalPrice = validItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const totalItems = validItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // কার্ট খালি করুন (শুধু valid items সরান)
+    // কার্ট খালি করুন
     cart.items = cart.items.filter((item) => !item.product);
     await cart.save();
 
@@ -95,4 +95,4 @@ export default async function handler(req, res) {
     console.error('Order create error:', error);
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
-        }
+                                         }

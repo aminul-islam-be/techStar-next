@@ -38,8 +38,13 @@ export default function Checkout() {
       const res = await fetch('/api/cart/get');
       const data = await res.json();
       if (data.success) {
-        setCart(data.cart);
-        if (data.cart.items.length === 0) {
+        // ✅ Safety Check: product null/undefined হলে ফিল্টার করুন
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
+        if (validItems.length === 0) {
           router.push('/cart');
         }
       }
@@ -104,7 +109,8 @@ export default function Checkout() {
     );
   }
 
-  if (cart.items.length === 0) {
+  // ✅ Safety Check: কার্ট খালি হলে
+  if (!cart.items || cart.items.length === 0) {
     return (
       <div>
         <Header />
@@ -129,12 +135,14 @@ export default function Checkout() {
         <div className="checkoutGrid">
           <div className="orderSummary">
             <h2>Order Summary</h2>
-            {cart.items.map((item) => (
-              <div key={item.product._id} className="summaryItem">
-                <span>{item.product.name} × {item.quantity}</span>
-                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
+            {cart.items
+              .filter((item) => item.product)
+              .map((item) => (
+                <div key={item.product._id} className="summaryItem">
+                  <span>{item.product.name} × {item.quantity}</span>
+                  <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
             <div className="summaryTotal">
               <span>Total:</span>
               <span>${cart.totalPrice.toFixed(2)}</span>
@@ -429,4 +437,4 @@ export default function Checkout() {
       `}</style>
     </>
   );
-        }
+}

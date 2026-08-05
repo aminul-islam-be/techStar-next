@@ -19,20 +19,27 @@ export default async function handler(req, res) {
     const userId = session.user.id;
     const { productId } = req.body;
 
+    console.log('Remove request:', { userId, productId });
+
     if (!productId) {
       return res.status(400).json({ message: 'Product ID is required' });
     }
 
-    const cart = await Cart.findOne({ user: userId });
+    let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
     // Remove item
+    const originalLength = cart.items.length;
     cart.items = cart.items.filter(
       (item) => !item.product || item.product.toString() !== productId
     );
+
+    if (cart.items.length === originalLength) {
+      return res.status(404).json({ message: 'Item not found in cart' });
+    }
 
     await cart.save();
     await cart.populate('items.product');

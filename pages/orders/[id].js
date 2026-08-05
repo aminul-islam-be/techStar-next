@@ -88,6 +88,19 @@ export default function OrderDetail() {
     window.print();
   };
 
+  // ✅ Payment Status Display
+  const getPaymentStatusDisplay = () => {
+    const status = order?.paymentStatus || 'pending';
+    if (status === 'pending') {
+      return { text: '⏳ Pending', className: 'statusPending' };
+    } else if (status === 'paid') {
+      return { text: '✅ Paid | Payable: $0', className: 'statusPaid' };
+    } else if (status === 'unpaid') {
+      return { text: `⚠️ Unpaid | Payable: $${order?.totalPrice?.toFixed(2) || '0.00'}`, className: 'statusUnpaid' };
+    }
+    return { text: status, className: '' };
+  };
+
   if (status === 'loading' || loading) {
     return (
       <div>
@@ -100,6 +113,7 @@ export default function OrderDetail() {
   if (!order) return null;
 
   const isAdmin = session?.user?.role === 'admin';
+  const paymentDisplay = getPaymentStatusDisplay();
 
   return (
     <>
@@ -177,7 +191,9 @@ export default function OrderDetail() {
               </div>
               <div className="detailRow">
                 <span className="label">Payment Status:</span>
-                <span className="value statusPayment">{order.paymentStatus}</span>
+                <span className={`value ${paymentDisplay.className}`}>
+                  {paymentDisplay.text}
+                </span>
               </div>
               <div className="detailRow">
                 <span className="label">Order Date:</span>
@@ -375,9 +391,17 @@ export default function OrderDetail() {
           word-break: break-word;
         }
 
-        .statusPayment {
-          text-transform: capitalize;
-          font-weight: 700;
+        /* ✅ Payment Status Colors */
+        .statusPending {
+          color: #ffc107;
+        }
+
+        .statusPaid {
+          color: #28a745;
+        }
+
+        .statusUnpaid {
+          color: #dc3545;
         }
 
         .statusButtons {

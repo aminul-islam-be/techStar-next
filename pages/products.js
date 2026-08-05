@@ -50,6 +50,12 @@ export default function ProductsPage() {
   };
 
   const addToCart = async (productId) => {
+    // ✅ productId আছে কিনা চেক করুন
+    if (!productId) {
+      alert('❌ Invalid product ID');
+      return;
+    }
+
     setAdding(prev => ({ ...prev, [productId]: true }));
 
     try {
@@ -105,7 +111,7 @@ export default function ProductsPage() {
           <div className="productGrid">
             {products.map((product) => (
               <div key={product._id} className="productCard">
-                {/* ✅ ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
+                {/* ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
                 <Link href={`/products/${product._id}`} className="productImageLink">
                   <div className="productImage">
                     {product.images && product.images.length > 0 ? (
@@ -385,4 +391,4 @@ export default function ProductsPage() {
       `}</style>
     </>
   );
-    }
+}

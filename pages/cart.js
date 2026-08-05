@@ -42,61 +42,100 @@ export default function CartPage() {
   };
 
   // ✅ পরিমাণ বাড়ানোর ফাংশন
-  // ✅ পরিমাণ বাড়ানোর ফাংশন
-  // ✅ পরিমাণ বাড়ানোর ফাংশন
-const increaseQuantity = async (productId) => {
-  console.log('Increase clicked for:', productId);
-  const item = cart.items.find((i) => i.product && i.product._id === productId);
-  if (item) {
-    const newQty = item.quantity + 1;
-    console.log('New quantity:', newQty);
-    await updateQuantity(productId, newQty);
-  }
-};
-
-// ✅ পরিমাণ কমানোর ফাংশন
-const decreaseQuantity = async (productId) => {
-  console.log('Decrease clicked for:', productId);
-  const item = cart.items.find((i) => i.product && i.product._id === productId);
-  if (item && item.quantity > 1) {
-    const newQty = item.quantity - 1;
-    console.log('New quantity:', newQty);
-    await updateQuantity(productId, newQty);
-  }
-};
-
-// ✅ Update Quantity ফাংশন
-const updateQuantity = async (productId, newQuantity) => {
-  if (newQuantity < 1) return;
-  setUpdating(true);
-
-  try {
-    console.log('Sending update:', { productId, quantity: newQuantity });
-    const res = await fetch('/api/cart/update', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, quantity: newQuantity }),
-    });
-    const data = await res.json();
-    console.log('Update response:', data);
-    
-    if (data.success) {
-      const validItems = data.cart.items.filter((item) => item.product);
-      setCart({
-        ...data.cart,
-        items: validItems,
-      });
-    } else {
-      alert(data.message || 'Failed to update cart');
+  const increaseQuantity = async (productId) => {
+    console.log('Increase clicked for:', productId);
+    const item = cart.items.find((i) => i.product && i.product._id === productId);
+    if (item) {
+      const newQty = item.quantity + 1;
+      console.log('New quantity:', newQty);
+      await updateQuantity(productId, newQty);
     }
-  } catch (error) {
-    console.error('Error updating cart:', error);
-    alert('❌ Something went wrong');
-  } finally {
-    setUpdating(false);
-  }
-};
-  
+  };
+
+  // ✅ পরিমাণ কমানোর ফাংশন
+  const decreaseQuantity = async (productId) => {
+    console.log('Decrease clicked for:', productId);
+    const item = cart.items.find((i) => i.product && i.product._id === productId);
+    if (item && item.quantity > 1) {
+      const newQty = item.quantity - 1;
+      console.log('New quantity:', newQty);
+      await updateQuantity(productId, newQty);
+    }
+  };
+
+  // ✅ Update Quantity ফাংশন
+  const updateQuantity = async (productId, newQuantity) => {
+    if (newQuantity < 1) return;
+    setUpdating(true);
+
+    try {
+      console.log('Sending update:', { productId, quantity: newQuantity });
+      const res = await fetch('/api/cart/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: newQuantity }),
+      });
+      const data = await res.json();
+      console.log('Update response:', data);
+      
+      if (data.success) {
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
+      } else {
+        alert(data.message || 'Failed to update cart');
+      }
+    } catch (error) {
+      console.error('Error updating cart:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // ✅ পণ্য সরানোর ফাংশন (✕ বাটন)
+  const removeItem = async (productId) => {
+    console.log('Remove clicked for:', productId);
+    
+    if (!productId) {
+      alert('❌ Invalid product ID');
+      return;
+    }
+
+    if (!confirm('Remove this item from cart?')) return;
+    
+    setUpdating(true);
+
+    try {
+      console.log('Sending remove request:', { productId });
+      const res = await fetch('/api/cart/remove', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
+      const data = await res.json();
+      console.log('Remove response:', data);
+      
+      if (data.success) {
+        const validItems = data.cart.items.filter((item) => item.product);
+        setCart({
+          ...data.cart,
+          items: validItems,
+        });
+        alert('✅ Product removed from cart!');
+      } else {
+        alert(data.message || 'Failed to remove item');
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading">
@@ -134,7 +173,6 @@ const updateQuantity = async (productId, newQuantity) => {
                 .filter((item) => item.product)
                 .map((item) => (
                   <div key={item.product._id} className="cartItem">
-                    {/* ✅ ইমেজে ক্লিক করলে Product Details পেজে যাবে */}
                     <Link href={`/products/${item.product._id}`} className="itemImageLink">
                       <div className="itemImageWrapper">
                         {item.product.images && item.product.images.length > 0 ? (
@@ -152,7 +190,6 @@ const updateQuantity = async (productId, newQuantity) => {
                       </div>
 
                       <div className="itemControls">
-                        {/* ✅ - বাটন */}
                         <button
                           onClick={() => decreaseQuantity(item.product._id)}
                           disabled={updating || item.quantity <= 1}
@@ -161,7 +198,6 @@ const updateQuantity = async (productId, newQuantity) => {
                           −
                         </button>
                         <span className="qty">{item.quantity}</span>
-                        {/* ✅ + বাটন */}
                         <button
                           onClick={() => increaseQuantity(item.product._id)}
                           disabled={updating}
@@ -173,7 +209,6 @@ const updateQuantity = async (productId, newQuantity) => {
 
                       <div className="itemTotal">
                         <p>${(item.product.price * item.quantity).toFixed(2)}</p>
-                        {/* ✅ ✕ বাটন */}
                         <button
                           onClick={() => removeItem(item.product._id)}
                           disabled={updating}
@@ -554,4 +589,4 @@ const updateQuantity = async (productId, newQuantity) => {
       `}</style>
     </>
   );
-  }
+    }

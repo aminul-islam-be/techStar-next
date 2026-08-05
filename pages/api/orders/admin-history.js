@@ -4,34 +4,28 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
 
 export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
   await dbConnect();
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session || !session.user) {
-    return res.status(401).json({ message: 'Please login first' });
-  }
-
-  if (session.user.role !== 'admin') {
+  if (!session || session.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admin only.' });
   }
 
-  if (req.method === 'GET') {
-    try {
-      // ✅ শুধু active অর্ডার দেখাবে (deleted নয়)
-      const orders = await Order.find({ isDeleted: false })
-        .populate('user', 'name email')
-        .sort({ createdAt: -1 });
+  try {
+    const orders = await Order.find({ adminDeleted: true })
+      .populate('user', 'name email')
+      .sort({ adminDeletedAt: -1 });
 
-      res.status(200).json({
-        success: true,
-        count: orders.length,
-        orders,
-      });
-    } catch (error) {
-      console.error('Orders fetch error:', error);
-      res.status(500).json({ message: error.message });
-    }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-}
+                }

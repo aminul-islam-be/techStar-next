@@ -84,7 +84,6 @@ export default function MyOrders() {
     }
   };
 
-  // ✅ Cancel Order - সঠিক PATCH method
   const handleCancel = async (orderId) => {
     if (!confirm('Are you sure you want to cancel this order?')) return;
     setProcessing(true);
@@ -96,10 +95,8 @@ export default function MyOrders() {
       });
       const data = await res.json();
       if (data.success) {
-        setOrders(orders.map(o => 
-          o._id === orderId ? { ...o, status: 'cancelled' } : o
-        ));
-        alert('✅ Order cancelled successfully!');
+        setOrders(orders.filter(o => o._id !== orderId));
+        alert('✅ Order cancelled and moved to My History!');
       } else {
         alert(data.message || 'Failed to cancel order');
       }
@@ -132,7 +129,12 @@ export default function MyOrders() {
       </Head>
       <Header />
       <div className="container">
-        <h1>📦 My Orders</h1>
+        <div className="headerRow">
+          <h1>📦 My Orders</h1>
+          <Link href="/my-history" className="historyLink">
+            🕘 View History
+          </Link>
+        </div>
 
         {orders.length === 0 ? (
           <div className="noOrders">
@@ -152,8 +154,8 @@ export default function MyOrders() {
                     <div className="headerRight">
                       <OrderStatusBadge status={order.status} />
                       <div className="menuWrapper">
-                        <button 
-                          className="menuBtn" 
+                        <button
+                          className="menuBtn"
                           onClick={() => toggleMenu(order._id)}
                           disabled={processing}
                         >
@@ -161,14 +163,14 @@ export default function MyOrders() {
                         </button>
                         {menuOpen === order._id && (
                           <div className="menuDropdown">
-                            <button 
+                            <button
                               onClick={() => handleDelete(order._id)}
                               className="menuItem delete"
                               disabled={processing}
                             >
                               🗑️ Delete
                             </button>
-                            <button 
+                            <button
                               onClick={() => handleCancel(order._id)}
                               className="menuItem cancel"
                               disabled={processing || order.status === 'cancelled'}
@@ -210,7 +212,10 @@ export default function MyOrders() {
 
       <style jsx>{`
         .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
-        h1 { font-size: 2rem; color: #333; margin-bottom: 24px; }
+        .headerRow { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+        h1 { font-size: 2rem; color: #333; margin: 0; }
+        .historyLink { color: #667eea; text-decoration: none; font-weight: 600; padding: 8px 16px; border: 1px solid #667eea; border-radius: 8px; transition: all 0.3s; }
+        .historyLink:hover { background: #667eea; color: white; }
         .loading { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.2rem; color: #666; }
         .noOrders { text-align: center; padding: 60px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .noOrders p { font-size: 1.1rem; color: #666; margin-bottom: 20px; }
@@ -258,4 +263,4 @@ export default function MyOrders() {
       `}</style>
     </>
   );
-          }
+    }

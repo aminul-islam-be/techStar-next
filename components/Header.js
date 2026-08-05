@@ -17,7 +17,6 @@ export default function Header() {
 
           {session ? (
             <>
-              {/* ✅ My Orders লিংক যোগ করা হলো */}
               <Link href="/my-orders" className="navLink">
                 📦 My Orders
               </Link>
@@ -122,6 +121,10 @@ export default function Header() {
           .navLink {
             font-size: 12px;
             padding: 4px 8px;
+          }
+
+          .cartText {
+            font-size: 12px !important;
           }
         }
       `}</style>

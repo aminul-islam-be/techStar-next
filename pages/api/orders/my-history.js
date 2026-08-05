@@ -16,17 +16,30 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
+    // ✅ Customer এর deleted অর্ডার খুঁজুন
     const orders = await Order.find({
       user: session.user.id,
       isDeleted: true,
       deletedBy: 'customer',
-    }).sort({ deletedAt: -1 });
+    })
+      .populate('user', 'name email')
+      .sort({ deletedAt: -1 });
 
-    // Auto-delete after 30 days (Client side will show countdown)
+    // ✅ 30 দিনের বেশি পুরনো অর্ডার Auto Delete (ফিল্টার)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const activeHistory = orders.filter(order => {
+      // autoDeleteAt না থাকলে দেখান
+      if (!order.autoDeleteAt) return true;
+      // autoDeleteAt তারিখ যদি আজকের থেকে বড় হয় (অর্থাৎ 30 দিন পার হয়নি)
+      return new Date(order.autoDeleteAt) > new Date();
+    });
+
     res.status(200).json({
       success: true,
-      count: orders.length,
-      orders,
+      count: activeHistory.length,
+      orders: activeHistory,
     });
   } catch (error) {
     console.error('My history error:', error);

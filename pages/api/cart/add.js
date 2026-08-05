@@ -1,7 +1,6 @@
 import dbConnect from '../../../lib/db';
 import Cart from '../../../models/Cart';
 import Product from '../../../models/Product';
-import User from '../../../models/User';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/authOptions';
 
@@ -14,28 +13,21 @@ export default async function handler(req, res) {
     await dbConnect();
 
     const session = await getServerSession(req, res, authOptions);
-    
     if (!session || !session.user) {
       return res.status(401).json({ message: 'Please login first' });
     }
 
-    // ইউজার ইমেইল দিয়ে MongoDB থেকে ইউজার খুঁজি
-    const userEmail = session.user.email;
-    if (!userEmail) {
-      return res.status(401).json({ message: 'User email not found' });
-    }
-
-    const user = await User.findOne({ email: userEmail });
-    if (!user) {
-      return res.status(401).json({ message: 'User not found in database' });
-    }
-
-    const userId = user._id.toString();
-
+    const userId = session.user.id;
     const { productId, quantity = 1 } = req.body;
 
+    // ✅ productId আছে কিনা চেক করুন
     if (!productId) {
       return res.status(400).json({ message: 'Product ID is required' });
+    }
+
+    // ✅ productId সঠিক ফরম্যাটে আছে কিনা চেক করুন
+    if (typeof productId !== 'string' || productId.length < 10) {
+      return res.status(400).json({ message: 'Invalid product ID format' });
     }
 
     const product = await Product.findById(productId);
@@ -57,7 +49,7 @@ export default async function handler(req, res) {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item) => item.product && item.product.toString() === productId
     );
 
     if (existingItem) {

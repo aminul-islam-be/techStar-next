@@ -28,7 +28,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Quantity must be at least 1' });
     }
 
-    // Check product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -38,13 +37,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Insufficient stock' });
     }
 
-    const cart = await Cart.findOne({ user: userId });
+    let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      cart = new Cart({
+        user: userId,
+        items: [],
+      });
     }
 
-    // Find and update item
     const itemIndex = cart.items.findIndex(
       (item) => item.product && item.product.toString() === productId
     );

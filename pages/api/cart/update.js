@@ -20,6 +20,8 @@ export default async function handler(req, res) {
     const userId = session.user.id;
     const { productId, quantity } = req.body;
 
+    console.log('Update request:', { userId, productId, quantity });
+
     if (!productId) {
       return res.status(400).json({ message: 'Product ID is required' });
     }
@@ -40,21 +42,24 @@ export default async function handler(req, res) {
     let cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
-      cart = new Cart({
-        user: userId,
-        items: [],
-      });
+      return res.status(404).json({ message: 'Cart not found' });
     }
 
-    const itemIndex = cart.items.findIndex(
-      (item) => item.product && item.product.toString() === productId
-    );
+    // Find the item in cart
+    let itemFound = false;
+    cart.items = cart.items.filter((item) => {
+      if (item.product && item.product.toString() === productId) {
+        item.quantity = quantity;
+        itemFound = true;
+        return true;
+      }
+      return true;
+    });
 
-    if (itemIndex === -1) {
+    if (!itemFound) {
       return res.status(404).json({ message: 'Item not found in cart' });
     }
 
-    cart.items[itemIndex].quantity = quantity;
     await cart.save();
     await cart.populate('items.product');
 

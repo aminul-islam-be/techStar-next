@@ -76,7 +76,7 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'bkash', 'nagad', 'rocket', 'sslcommerz'], // ✅ rocket যোগ করা হয়েছে
+    enum: ['cash', 'bkash', 'nagad', 'rocket', 'sslcommerz'],
     default: 'cash',
   },
   paymentStatus: {
@@ -85,6 +85,10 @@ const OrderSchema = new mongoose.Schema({
     default: 'pending',
   },
   notes: {
+    type: String,
+    default: '',
+  },
+  trxId: {
     type: String,
     default: '',
   },

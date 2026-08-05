@@ -76,7 +76,7 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'bkash', 'nagad', 'sslcommerz'],
+    enum: ['cash', 'bkash', 'nagad', 'rocket', 'sslcommerz'], // ✅ rocket যোগ করা হয়েছে
     default: 'cash',
   },
   paymentStatus: {

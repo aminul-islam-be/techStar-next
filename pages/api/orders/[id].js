@@ -11,27 +11,36 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Please login first' });
   }
 
-  if (session.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied. Admin only.' });
-  }
-
+  // Admin অথবা Order এর Owner (Customer) চেক করুন
+  const isAdmin = session.user.role === 'admin';
   const { id } = req.query;
 
-  // GET: একটি অর্ডার দেখুন
+  // GET: একটি অর্ডার দেখুন (Admin অথবা Customer)
   if (req.method === 'GET') {
     try {
       const order = await Order.findById(id).populate('user', 'name email');
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
+
+      // Customer চেক: শুধু নিজের অর্ডার দেখতে পারবে
+      if (!isAdmin && order.user._id.toString() !== session.user.id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
       res.status(200).json({ success: true, order });
     } catch (error) {
+      console.error('Order fetch error:', error);
       res.status(500).json({ message: error.message });
     }
   }
 
-  // PUT: অর্ডার স্ট্যাটাস আপডেট করুন
+  // PUT: অর্ডার আপডেট করুন (শুধু Admin)
   else if (req.method === 'PUT') {
+    if (!isAdmin) {
+      return res.status(403).json({ message: 'Access denied. Admin only.' });
+    }
+
     try {
       const { status, paymentStatus, notes } = req.body;
 
@@ -52,12 +61,17 @@ export default async function handler(req, res) {
         order,
       });
     } catch (error) {
+      console.error('Order update error:', error);
       res.status(500).json({ message: error.message });
     }
   }
 
-  // DELETE: অর্ডার ডিলিট করুন
+  // DELETE: অর্ডার ডিলিট করুন (শুধু Admin)
   else if (req.method === 'DELETE') {
+    if (!isAdmin) {
+      return res.status(403).json({ message: 'Access denied. Admin only.' });
+    }
+
     try {
       const order = await Order.findByIdAndDelete(id);
       if (!order) {
@@ -68,6 +82,7 @@ export default async function handler(req, res) {
         message: 'Order deleted successfully',
       });
     } catch (error) {
+      console.error('Order delete error:', error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -75,4 +90,4 @@ export default async function handler(req, res) {
   else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-}
+                        }

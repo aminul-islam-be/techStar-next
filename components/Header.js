@@ -17,9 +17,26 @@ export default function Header() {
 
           {session ? (
             <>
+              {/* ✅ Customer এর জন্য My Orders & My History */}
               <Link href="/my-orders" className="navLink">
                 📦 My Orders
               </Link>
+              <Link href="/my-history" className="navLink">
+                📜 My History
+              </Link>
+
+              {/* ✅ Admin এর জন্য অতিরিক্ত লিংক */}
+              {session.user.role === 'admin' && (
+                <>
+                  <Link href="/admin/order-history" className="navLink">
+                    🗑️ Order History
+                  </Link>
+                  <Link href="/admin/cancelled-orders" className="navLink">
+                    ✖️ Cancelled
+                  </Link>
+                </>
+              )}
+
               <Link href="/auth/profile" className="navLink">
                 👤 {session.user.name}
               </Link>

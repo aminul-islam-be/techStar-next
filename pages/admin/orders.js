@@ -12,6 +12,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
+  const [updating, setUpdating] = useState(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -58,6 +59,32 @@ export default function AdminOrders() {
       alert('❌ Something went wrong');
     } finally {
       setDeleting(null);
+    }
+  };
+
+  // ✅ Payment Status আপডেট ফাংশন
+  const updatePaymentStatus = async (orderId, newStatus) => {
+    if (!confirm(`Change payment status to ${newStatus}?`)) return;
+
+    setUpdating(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentStatus: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('✅ Payment status updated!');
+        fetchOrders();
+      } else {
+        alert(data.message || 'Failed to update');
+      }
+    } catch (error) {
+      console.error('Update error:', error);
+      alert('❌ Something went wrong');
+    } finally {
+      setUpdating(null);
     }
   };
 
@@ -122,9 +149,17 @@ export default function AdminOrders() {
                     <td>${order.totalPrice.toFixed(2)}</td>
                     <td><OrderStatusBadge status={order.status} /></td>
                     <td>
-                      <span className={order.paymentStatus === 'paid' ? 'statusActive' : 'statusInactive'}>
-                        {order.paymentStatus}
-                      </span>
+                      {/* ✅ Payment Status Dropdown */}
+                      <select
+                        value={order.paymentStatus || 'pending'}
+                        onChange={(e) => updatePaymentStatus(order._id, e.target.value)}
+                        disabled={updating === order._id}
+                        className="paymentStatusSelect"
+                      >
+                        <option value="pending">⏳ Pending</option>
+                        <option value="paid">✅ Paid</option>
+                        <option value="unpaid">⚠️ Unpaid</option>
+                      </select>
                     </td>
                     <td>{formatDate(order.createdAt)}</td>
                     <td className="actions">
@@ -194,7 +229,7 @@ export default function AdminOrders() {
         .orderTable {
           width: 100%;
           border-collapse: collapse;
-          min-width: 800px;
+          min-width: 900px;
         }
         .orderTable th {
           background: #f8f9fa;
@@ -212,13 +247,22 @@ export default function AdminOrders() {
         .orderTable tr:hover td {
           background: #fafafa;
         }
-        .statusActive {
-          color: #28a745;
-          font-weight: 600;
+        .paymentStatusSelect {
+          padding: 4px 8px;
+          border-radius: 4px;
+          border: 1px solid #ddd;
+          font-size: 13px;
+          cursor: pointer;
+          background: white;
+          font-weight: 500;
         }
-        .statusInactive {
-          color: #dc3545;
-          font-weight: 600;
+        .paymentStatusSelect:focus {
+          outline: none;
+          border-color: #667eea;
+        }
+        .paymentStatusSelect:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
         .actions {
           display: flex;
@@ -258,8 +302,12 @@ export default function AdminOrders() {
           .actions {
             flex-direction: column;
           }
+          .paymentStatusSelect {
+            font-size: 12px;
+            padding: 2px 6px;
+          }
         }
       `}</style>
     </>
   );
-          }
+  }

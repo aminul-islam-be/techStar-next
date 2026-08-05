@@ -38,6 +38,7 @@ export default function Checkout() {
       const res = await fetch('/api/cart/get');
       const data = await res.json();
       if (data.success) {
+        // ✅ Safety Check: product null/undefined হলে ফিল্টার করুন
         const validItems = data.cart.items.filter((item) => item.product);
         setCart({
           ...data.cart,
@@ -87,8 +88,8 @@ export default function Checkout() {
       const data = await res.json();
 
       if (data.success) {
-        alert('✅ Order placed successfully! Please complete payment.');
-        router.push('/orders/' + data.order._id);
+        alert('✅ Order placed successfully!');
+        router.push('/products');
       } else {
         setError(data.message || 'Failed to place order');
       }
@@ -108,7 +109,8 @@ export default function Checkout() {
     );
   }
 
-  if (cart.items.length === 0) {
+  // ✅ Safety Check: কার্ট খালি হলে
+  if (!cart.items || cart.items.length === 0) {
     return (
       <div>
         <Header />
@@ -133,12 +135,14 @@ export default function Checkout() {
         <div className="checkoutGrid">
           <div className="orderSummary">
             <h2>Order Summary</h2>
-            {cart.items.map((item) => (
-              <div key={item.product._id} className="summaryItem">
-                <span>{item.product.name} × {item.quantity}</span>
-                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
+            {cart.items
+              .filter((item) => item.product)
+              .map((item) => (
+                <div key={item.product._id} className="summaryItem">
+                  <span>{item.product.name} × {item.quantity}</span>
+                  <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
             <div className="summaryTotal">
               <span>Total:</span>
               <span>${cart.totalPrice.toFixed(2)}</span>
@@ -221,7 +225,6 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* ✅ Payment Method - TrxID ছাড়া */}
             <div className="formGroup">
               <label>Payment Method</label>
               <select
@@ -230,16 +233,11 @@ export default function Checkout() {
                 onChange={handleChange}
               >
                 <option value="cash">Cash on Delivery</option>
-                <option value="bkash">bKash (Send to 01922964696)</option>
-                <option value="nagad">Nagad (Send to 01922964696)</option>
-                <option value="rocket">Rocket (Send to 01922964696)</option>
+                <option value="bkash">bKash</option>
+                <option value="nagad">Nagad</option>
+<option value="rocket">Rocket</option>
+                <option value="sslcommerz">SSLCommerz</option>
               </select>
-              {formData.paymentMethod !== 'cash' && (
-                <small className="hint">
-                  📱 Please send payment to <strong>01922964696</strong>.
-                  After payment, we will verify and confirm your order.
-                </small>
-              )}
             </div>
 
             <div className="formGroup">
@@ -403,17 +401,6 @@ export default function Checkout() {
           gap: 16px;
         }
 
-        .hint {
-          display: block;
-          font-size: 12px;
-          color: #888;
-          margin-top: 6px;
-          padding: 8px 12px;
-          background: #f8f9fa;
-          border-radius: 6px;
-          border-left: 3px solid #667eea;
-        }
-
         .checkoutSubmit {
           width: 100%;
           padding: 14px;
@@ -451,4 +438,4 @@ export default function Checkout() {
       `}</style>
     </>
   );
-                         }
+  }

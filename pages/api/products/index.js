@@ -13,10 +13,13 @@ export default async function handler(req, res) {
       .sort({ createdAt: -1 })
       .limit(20);
 
+    // ✅ প্রতিটি পণ্যের _id আছে কিনা চেক করুন
+    const validProducts = products.filter(product => product._id);
+
     res.status(200).json({
       success: true,
-      count: products.length,
-      products,
+      count: validProducts.length,
+      products: validProducts,
     });
   } catch (error) {
     console.error('Products fetch error:', error);

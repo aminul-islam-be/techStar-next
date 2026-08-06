@@ -163,19 +163,25 @@ export default function MyOrders() {
                         </button>
                         {menuOpen === order._id && (
                           <div className="menuDropdown">
-                            <button
-                              onClick={() => handleDelete(order._id)}
-                              className="menuItem delete"
-                              disabled={processing}
+                            <Link
+                              href={`/orders/${order._id}`}
+                              className="menuItem details"
                             >
-                              🗑️ Delete
-                            </button>
+                              📋 Details
+                            </Link>
                             <button
                               onClick={() => handleCancel(order._id)}
                               className="menuItem cancel"
                               disabled={processing || order.status === 'cancelled'}
                             >
                               ✖️ Cancel Order
+                            </button>
+                            <button
+                              onClick={() => handleDelete(order._id)}
+                              className="menuItem delete"
+                              disabled={processing}
+                            >
+                              🗑️ Delete
                             </button>
                           </div>
                         )}
@@ -210,7 +216,8 @@ export default function MyOrders() {
         )}
       </div>
 
-      <style jsx>{`
+      <style jsx>{`.menuItem.details { color: #17a2b8; text-decoration: none; }
+        .menuItem.details:hover { background: #e7f7f9; }
         .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
         .headerRow { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
         h1 { font-size: 2rem; color: #333; margin: 0; }

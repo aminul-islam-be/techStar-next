@@ -1,441 +1,118 @@
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import Header from '../components/Header';
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import Header from "../components/Header";
 
 export default function Checkout() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [cart, setCart] = useState({ items: [], totalItems: 0, totalPrice: 0 });
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    fullName: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: 'Bangladesh',
-    phone: '',
-    paymentMethod: 'cash',
-    notes: '',
+  const [loading, setLoading] = useState(true),
+    [submitting, setSubmitting] = useState(false),
+    [error, setError] = useState("");
+  const [form, setForm] = useState({
+    fullName: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "Bangladesh",
+    phone: "",
+    email: "",
+    paymentMethod: "cash",
+    notes: "",
   });
-
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/login');
-      return;
-    }
-    if (status === 'authenticated') {
+    if (status === "unauthenticated") router.push("/auth/login");
+    if (status === "authenticated") {
       fetchCart();
+      loadProfile();
     }
-  }, [status, router]);
-
-  const fetchCart = async () => {
+  }, [status]);
+  async function fetchCart() {
     try {
-      const res = await fetch('/api/cart/get');
-      const data = await res.json();
-      if (data.success) {
-        // ✅ Safety Check: product null/undefined হলে ফিল্টার করুন
-        const validItems = data.cart.items.filter((item) => item.product);
-        setCart({
-          ...data.cart,
-          items: validItems,
-        });
-        if (validItems.length === 0) {
-          router.push('/cart');
-        }
+      const r = await fetch("/api/cart/get");
+      const d = await r.json();
+      if (d.success) {
+        const items = (d.cart.items || []).filter((i) => i.product);
+        setCart({ ...d.cart, items });
+        if (!items.length) router.push("/cart");
       }
-    } catch (error) {
-      console.error('Error fetching cart:', error);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSubmitting(true);
-
+  }
+  async function loadProfile() {
     try {
-      const res = await fetch('/api/orders/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const r = await fetch("/api/profile");
+      const d = await r.json();
+      if (r.ok) {
+        const p = d.profile || {};
+        setForm((f) => ({
+          ...f,
+          fullName: p.name || f.fullName,
+          phone: p.phone || f.phone,
+          email: p.email || f.email,
+          address: p.permanentAddress || f.address,
+          city: p.city || f.city,
+          postalCode: p.postalCode || f.postalCode,
+          country: p.country || f.country,
+        }));
+      }
+    } catch (e) {
+      console.error("Profile prefill error", e);
+    }
+  }
+  const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  async function submit(e) {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+    try {
+      const r = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           shippingAddress: {
-            fullName: formData.fullName,
-            address: formData.address,
-            city: formData.city,
-            postalCode: formData.postalCode,
-            country: formData.country,
-            phone: formData.phone,
+            fullName: form.fullName,
+            address: form.address,
+            city: form.city,
+            postalCode: form.postalCode,
+            country: form.country,
+            phone: form.phone,
+            email: form.email,
           },
-          paymentMethod: formData.paymentMethod,
-          notes: formData.notes,
+          paymentMethod: form.paymentMethod,
+          notes: form.notes,
         }),
       });
-
-      const data = await res.json();
-
-      if (data.success) {
-        alert('✅ Order placed successfully!');
-        router.push('/products');
-      } else {
-        setError(data.message || 'Failed to place order');
-      }
-    } catch (error) {
-      setError('Something went wrong');
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.message || "Failed to place order");
+      alert("âœ… Order placed successfully!");
+      router.push("/products");
+    } catch (e) {
+      setError(e.message);
     } finally {
       setSubmitting(false);
     }
-  };
-
-  if (status === 'loading' || loading) {
-    return (
-      <div>
-        <Header />
-        <div className="loading">Loading...</div>
-      </div>
-    );
   }
-
-  // ✅ Safety Check: কার্ট খালি হলে
-  if (!cart.items || cart.items.length === 0) {
+  if (status === "loading" || loading)
     return (
-      <div>
-        <Header />
-        <div className="empty">
-          <h2>Your cart is empty</h2>
-          <Link href="/products" className="btn">Browse Products</Link>
-        </div>
-      </div>
+      <> <Header /> <div className="loading">Loading...</div> </>
     );
-  }
-
+  if (!cart.items.length)
+    return (
+      <> <Header /> <div className="empty"> <h2>Your cart is empty</h2> <Link href="/products" className="btn"> Browse Products </Link> </div> </>
+    );
   return (
-    <>
-      <Head>
-        <title>Checkout - TechStar</title>
-      </Head>
-      <Header />
-      <div className="container">
-        <h1 className="pageTitle">📋 Checkout</h1>
-        <p className="pageSubtitle">Complete your order</p>
-
-        <div className="checkoutGrid">
-          <div className="orderSummary">
-            <h2>Order Summary</h2>
-            {cart.items
-              .filter((item) => item.product)
-              .map((item) => (
-                <div key={item.product._id} className="summaryItem">
-                  <span>{item.product.name} × {item.quantity}</span>
-                  <span>${(item.product.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-            <div className="summaryTotal">
-              <span>Total:</span>
-              <span>${cart.totalPrice.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="checkoutForm">
-            {error && <div className="error">{error}</div>}
-
-            <div className="formGroup">
-              <label>Full Name *</label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            <div className="formGroup">
-              <label>Address *</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-                placeholder="Enter your address"
-              />
-            </div>
-
-            <div className="formRow">
-              <div className="formGroup">
-                <label>City *</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                  placeholder="City"
-                />
-              </div>
-              <div className="formGroup">
-                <label>Postal Code *</label>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={handleChange}
-                  required
-                  placeholder="Postal code"
-                />
-              </div>
-            </div>
-
-            <div className="formRow">
-              <div className="formGroup">
-                <label>Country</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  placeholder="Country"
-                />
-              </div>
-              <div className="formGroup">
-                <label>Phone *</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  placeholder="Phone number"
-                />
-              </div>
-            </div>
-
-            <div className="formGroup">
-              <label>Payment Method</label>
-              <select
-                name="paymentMethod"
-                value={formData.paymentMethod}
-                onChange={handleChange}
-              >
-                <option value="cash">Cash on Delivery</option>
-                <option value="bkash">bKash</option>
-                <option value="nagad">Nagad</option>
-<option value="rocket">Rocket</option>
-                <option value="sslcommerz">SSLCommerz</option>
-              </select>
-            </div>
-
-            <div className="formGroup">
-              <label>Order Notes (Optional)</label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                placeholder="Any special instructions"
-                rows="3"
-              />
-            </div>
-
-            <button type="submit" disabled={submitting} className="btn btn-primary checkoutSubmit">
-              {submitting ? '⏳ Placing Order...' : '✅ Confirm Order'}
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <style jsx>{`
-        .container {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 20px 16px;
-        }
-
-        .pageTitle {
-          font-size: 2.5rem;
-          color: #333;
-          margin-bottom: 4px;
-        }
-
-        .pageSubtitle {
-          color: #666;
-          margin-bottom: 24px;
-          font-size: 1.1rem;
-        }
-
-        .loading {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 50vh;
-          font-size: 1.2rem;
-          color: #666;
-        }
-
-        .empty {
-          text-align: center;
-          padding: 60px 20px;
-        }
-
-        .empty h2 {
-          color: #666;
-          margin-bottom: 20px;
-        }
-
-        .btn {
-          display: inline-block;
-          padding: 12px 24px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          text-decoration: none;
-          border-radius: 8px;
-          border: none;
-          cursor: pointer;
-          font-weight: 600;
-        }
-
-        .checkoutGrid {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 30px;
-        }
-
-        .orderSummary {
-          background: white;
-          padding: 24px;
-          border-radius: 12px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-          height: fit-content;
-        }
-
-        .orderSummary h2 {
-          margin: 0 0 16px 0;
-          font-size: 1.2rem;
-          color: #333;
-        }
-
-        .summaryItem {
-          display: flex;
-          justify-content: space-between;
-          padding: 8px 0;
-          border-bottom: 1px solid #f0f0f0;
-          font-size: 14px;
-          color: #555;
-        }
-
-        .summaryTotal {
-          display: flex;
-          justify-content: space-between;
-          padding: 12px 0;
-          font-size: 1.2rem;
-          font-weight: 700;
-          color: #333;
-          border-top: 2px solid #eaeaea;
-          margin-top: 8px;
-        }
-
-        .checkoutForm {
-          background: white;
-          padding: 24px;
-          border-radius: 12px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .error {
-          background: #fee;
-          color: #c00;
-          padding: 12px 16px;
-          border-radius: 8px;
-          margin-bottom: 16px;
-        }
-
-        .formGroup {
-          margin-bottom: 16px;
-        }
-
-        .formGroup label {
-          display: block;
-          margin-bottom: 6px;
-          font-weight: 600;
-          color: #333;
-          font-size: 14px;
-        }
-
-        .formGroup input,
-        .formGroup textarea,
-        .formGroup select {
-          width: 100%;
-          padding: 10px 14px;
-          border: 2px solid #e0e0e0;
-          border-radius: 8px;
-          font-size: 16px;
-          transition: border-color 0.3s;
-          box-sizing: border-box;
-          font-family: inherit;
-        }
-
-        .formGroup input:focus,
-        .formGroup textarea:focus,
-        .formGroup select:focus {
-          outline: none;
-          border-color: #667eea;
-        }
-
-        .formRow {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-
-        .checkoutSubmit {
-          width: 100%;
-          padding: 14px;
-          font-size: 1.1rem;
-          font-weight: 700;
-          background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-          border-radius: 12px;
-          transition: all 0.3s;
-          border: none;
-          color: white;
-          cursor: pointer;
-        }
-
-        .checkoutSubmit:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .checkoutSubmit:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-          .checkoutGrid {
-            grid-template-columns: 1fr;
-          }
-          .formRow {
-            grid-template-columns: 1fr;
-          }
-          .pageTitle {
-            font-size: 2rem;
-          }
-        }
-      `}</style>
-    </>
+    <> <Head> <title>Checkout - TechStar</title> </Head> <Header /> <div className="container"> <h1>ðŸ“‹ Checkout</h1> <p className="sub"> Profile information is auto-filled. Changes here apply only to this order. </p> <div className="grid"> <div className="summary"> <h2>Order Summary</h2> {cart.items.map((i) => ( <div className="item" key={i.product._id}> <span> {i.product.name} Ã— {i.quantity} </span> <span>${(i.product.price * i.quantity).toFixed(2)}</span> </div> ))} <div className="total"> <b>Total</b> <b>${cart.totalPrice.toFixed(2)}</b> </div> </div> <form onSubmit={submit} className="form"> {error && <div className="error">{error}</div>} <Field label="Full Name *" name="fullName" value={form.fullName} onChange={change} required /> <Field label="Email Address" name="email" value={form.email} onChange={change} type="email" /> <Field label="Permanent/Delivery Address *" name="address" value={form.address} onChange={change} required /> <div className="row"> <Field label="City *" name="city" value={form.city} onChange={change} required /> <Field label="Postal Code *" name="postalCode" value={form.postalCode} onChange={change} required /> </div> <div className="row"> <Field label="Country" name="country" value={form.country} onChange={change} /> <Field label="Phone *" name="phone" value={form.phone} onChange={change} type="tel" required /> </div> <div className="field"> <label>Payment Method</label> <select name="paymentMethod" value={form.paymentMethod} onChange={change} > <option value="cash">Cash on Delivery</option> <option value="bkash">bKash</option> <option value="nagad">Nagad</option> <option value="rocket">Rocket</option> <option value="sslcommerz">SSLCommerz</option> </select> </div> <div className="field"> <label>Order Notes</label> <textarea name="notes" value={form.notes} onChange={change} rows="3" placeholder="Any special instructions" /> </div> <button className="submit" disabled={submitting}> {submitting ? "Placing Order..." : "âœ… Confirm Order"} </button> </form> </div> </div> <style jsx>{` .container { max-width: 1000px; margin: auto; padding: 24px 16px; } h1 { color: #333; margin-bottom: 4px; } .sub { color: #666; margin-bottom: 24px; } .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; } .summary, .form { background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); } .summary { height: max-content; } .summary h2 { margin-top: 0; } .item, .total { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid #eee; } .total { border-top: 2px solid #ddd; border-bottom: 0; margin-top: 8px; padding-top: 14px; } .field { margin-bottom: 15px; } .field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; } .field input, .field select, .field textarea { width: 100%; box-sizing: border-box; padding: 11px 13px; border: 2px solid #e0e0e0; border-radius: 8px; font: inherit; } .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #667eea; } .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .error { background: #fee; color: #c00; padding: 12px; border-radius: 8px; margin-bottom: 15px; } .submit, .btn { display: block; width: 100%; padding: 13px; border: 0; border-radius: 9px; background: linear-gradient(135deg, #28a745, #20c997); color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; } .submit:disabled { opacity: 0.6; } .loading { height: 50vh; display: grid; place-items: center; } .empty { text-align: center; padding: 60px 20px; } @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } } `}</style> </>
   );
-  }
+}
+function Field({ label, name, value, onChange, type = "text", required = false, }) {
+  return (
+    <div className="field"> <label>{label}</label> <input type={type} name={name} value={value || ""} onChange={onChange} required={required} /> </div>
+  );
+    }

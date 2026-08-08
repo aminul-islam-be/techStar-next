@@ -5,7 +5,7 @@ const STORAGE_KEY = "techstar_ai_chat_history_v1";
 const welcomeMessage = {
   role: "assistant",
   content:
-    "Assalamu Alaikum! TechStar AI\\n\\nржЖржкржирж┐ ржЖржорж╛ржХрзЗ ржпрзЗржХрзЛржирзЛ ржкрзНрж░рж╢рзНржи ржХрж░рждрзЗ ржкрж╛рж░рзЗржитАФTechnology, Electronics, Engineering, Programming, Math, Business, General Knowledge ржмрж╛ TechStar-ржПрж░ product рж╕ржорзНржкрж░рзНржХрзЗржУред",
+    "Assalamu Alaikum! TechStar AI\\our website\\Technology, Electronics, Engineering, Programming, Math, Business, General Knowledge , TechStar- products , product price, How can I help you ?",
 };
 
 export default function AIChatbot() {

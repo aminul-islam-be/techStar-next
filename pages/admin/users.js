@@ -92,7 +92,6 @@ export default function AdminUsers() {
     }
   };
 
-  // Search filter
   const filteredUsers = users.filter(user =>
     user.name?.toLowerCase().includes(search.toLowerCase()) ||
     user.email?.toLowerCase().includes(search.toLowerCase()) ||
@@ -120,7 +119,6 @@ export default function AdminUsers() {
           <span className="userCount">Total: {users.length} users</span>
         </div>
 
-        {/* Search Bar */}
         <div className="searchBar">
           <input
             type="text"
@@ -153,13 +151,10 @@ export default function AdminUsers() {
                 {filteredUsers.map((user, index) => (
                   <tr key={user._id}>
                     <td>{index + 1}</td>
-                    <td>
-                      <span className="userName">{user.name || 'N/A'}</span>
-                    </td>
+                    <td><span className="userName">{user.name || 'N/A'}</span></td>
                     <td>{user.email || 'N/A'}</td>
                     <td>{user.phone || 'N/A'}</td>
                     <td>
-                      {/* Role Dropdown */}
                       <select
                         value={user.role || 'user'}
                         onChange={(e) => updateRole(user._id, e.target.value)}
@@ -198,7 +193,6 @@ export default function AdminUsers() {
           margin: 0 auto;
           padding: 20px 16px;
         }
-
         .headerRow {
           display: flex;
           justify-content: space-between;
@@ -207,13 +201,11 @@ export default function AdminUsers() {
           gap: 12px;
           margin-bottom: 20px;
         }
-
         h1 {
           margin: 0;
           font-size: 2rem;
           color: #333;
         }
-
         .userCount {
           font-size: 1rem;
           color: #666;
@@ -221,11 +213,9 @@ export default function AdminUsers() {
           padding: 4px 16px;
           border-radius: 20px;
         }
-
         .searchBar {
           margin-bottom: 20px;
         }
-
         .searchInput {
           width: 100%;
           padding: 10px 16px;
@@ -235,12 +225,10 @@ export default function AdminUsers() {
           transition: border-color 0.3s;
           box-sizing: border-box;
         }
-
         .searchInput:focus {
           outline: none;
           border-color: #667eea;
         }
-
         .loading {
           display: flex;
           justify-content: center;
@@ -249,7 +237,6 @@ export default function AdminUsers() {
           font-size: 1.2rem;
           color: #666;
         }
-
         .noUsers {
           text-align: center;
           padding: 60px 20px;
@@ -257,25 +244,21 @@ export default function AdminUsers() {
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
         .noUsers p {
           font-size: 1.1rem;
           color: #666;
         }
-
         .tableWrapper {
           background: white;
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
           overflow-x: auto;
         }
-
         .userTable {
           width: 100%;
           border-collapse: collapse;
           min-width: 800px;
         }
-
         .userTable th {
           background: #f8f9fa;
           padding: 12px 16px;
@@ -284,22 +267,18 @@ export default function AdminUsers() {
           color: #333;
           border-bottom: 2px solid #eaeaea;
         }
-
         .userTable td {
           padding: 12px 16px;
           border-bottom: 1px solid #f0f0f0;
           color: #555;
         }
-
         .userTable tr:hover td {
           background: #fafafa;
         }
-
         .userName {
           font-weight: 500;
           color: #333;
         }
-
         .roleSelect {
           padding: 4px 8px;
           border-radius: 4px;
@@ -309,23 +288,19 @@ export default function AdminUsers() {
           background: white;
           font-weight: 500;
         }
-
         .roleSelect:focus {
           outline: none;
           border-color: #667eea;
         }
-
         .roleSelect:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-
         .actions {
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
         }
-
         .btnView {
           padding: 4px 12px;
           background: #17a2b8;
@@ -336,11 +311,9 @@ export default function AdminUsers() {
           border: none;
           cursor: pointer;
         }
-
         .btnView:hover {
           background: #138496;
         }
-
         .btnDelete {
           padding: 4px 12px;
           background: #dc3545;
@@ -350,26 +323,21 @@ export default function AdminUsers() {
           font-size: 13px;
           cursor: pointer;
         }
-
         .btnDelete:hover:not(:disabled) {
           background: #c82333;
         }
-
         .btnDelete:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-
         @media (max-width: 600px) {
           .headerRow {
             flex-direction: column;
             align-items: stretch;
           }
-
           .userCount {
             text-align: center;
           }
-
           .actions {
             flex-direction: column;
             gap: 4px;
@@ -378,4 +346,4 @@ export default function AdminUsers() {
       `}</style>
     </>
   );
-}
+}l

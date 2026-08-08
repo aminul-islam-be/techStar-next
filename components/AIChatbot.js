@@ -5,7 +5,7 @@ const STORAGE_KEY = "techstar_ai_chat_history_v1";
 const welcomeMessage = {
   role: "assistant",
   content:
-    "Assalamu Alaikum! TechStar AI\\our website\\Technology, Electronics, Engineering, Programming, Math, Business, General Knowledge , TechStar- products , product price, How can I help you ?",
+    "Assalamu Alaikum! You can ask for anything.TechStar AI\\our website\\Technology, Electronics, Engineering, Programming, Math, Business, General Knowledge , TechStar- products , product price, How can I help you ?",
 };
 
 export default function AIChatbot() {
@@ -82,7 +82,7 @@ export default function AIChatbot() {
           role: "assistant",
           content:
             data.reply ||
-            "ржжрзБржГржЦрж┐ржд, ржХрзЛржирзЛ ржЙрждрзНрждрж░ ржкрж╛ржУрзЯрж╛ ржпрж╛рзЯржирж┐ред",
+            "Hello",
         },
       ]);
     } catch (error) {

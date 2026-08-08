@@ -13,3 +13,11 @@ export default function Header() {
     </header>
   );
     }
+{session?.user?.role === 'admin' && (
+  <>
+    <Link href="/admin/users" className="navLink">
+      👥 Users
+    </Link>
+    {/* ... অন্যান্য Admin লিংক */}
+  </>
+)}
